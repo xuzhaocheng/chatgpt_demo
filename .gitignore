@@ -1,2 +1,5 @@
 chatgpt_demo/.venv/*
 **/.DS_Store*
+**/*.sqlite3*
+**/*.xcuserstate*
+**/*.xcuserdatad*
