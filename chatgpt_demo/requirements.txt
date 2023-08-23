@@ -1,0 +1,35 @@
+altgraph @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot2/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-124/altgraph-0.17.2-py2.py3-none-any.whl
+appdirs==1.4.4
+asgiref==3.7.2
+beautifulsoup4==4.12.2
+bs4==0.0.1
+certifi==2023.7.22
+charset-normalizer==3.2.0
+cssselect==1.2.0
+Django==4.2.4
+django-rest-framework==0.1.0
+djangorestframework==3.14.0
+fake-useragent==1.2.1
+future @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot2/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-124/future-0.18.2-py3-none-any.whl
+idna==3.4
+importlib-metadata==6.8.0
+importlib-resources==6.0.1
+lxml==4.9.3
+macholib @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot2/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-124/macholib-1.15.2-py2.py3-none-any.whl
+mysql-client==0.0.1
+parse==1.19.1
+pyee==8.2.2
+pyppeteer==1.0.2
+pyquery==2.0.0
+pytz==2023.3
+requests==2.31.0
+requests-html==0.10.0
+six @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot2/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-124/six-1.15.0-py2.py3-none-any.whl
+soupsieve==2.4.1
+sqlparse==0.4.4
+tqdm==4.66.1
+typing_extensions==4.7.1
+urllib3==1.26.16
+w3lib==2.1.2
+websockets==10.4
+zipp==3.16.2
