@@ -20,5 +20,5 @@ from chatgpt_demo import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('listings/', views.ListingList),
+    path('listings/', views.listing_list),
 ]
