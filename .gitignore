@@ -3,3 +3,4 @@ chatgpt_demo/.venv/*
 **/*.sqlite3*
 **/*.xcuserstate*
 **/*.xcuserdatad*
+**/constants.py
