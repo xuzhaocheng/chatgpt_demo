@@ -1,3 +1,9 @@
+import os
+import sys
+
+from pathlib import Path
+sys.path[0] = str(Path(sys.path[0]).parent)
+
 from django.http import JsonResponse
 from .models import Listing
 from .serializers import ListingSerializer
@@ -7,8 +13,15 @@ from rest_framework import status
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from requests_html import HTMLSession
+from langchain.document_loaders import SeleniumURLLoader
+from langchain.chains import ConversationalRetrievalChain, RetrievalQA
+from langchain.chat_models import ChatOpenAI
+from langchain.indexes import VectorstoreIndexCreator
 
 import urllib.request
+from .constants import APIKEY
+
+os.environ["OPENAI_API_KEY"] = APIKEY
 
 @api_view(['GET', 'POST'])
 def listing_list(request):
@@ -25,6 +38,7 @@ def listing_list(request):
         if serializer.is_valid():
             # listing = serializer.data
             # serializer.save()
+            _load_data(serializer.data['url'])
             return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 def _parse_data(url):
@@ -48,9 +62,9 @@ def _parse_data(url):
             print('http error',e)
 
     # print(html)
-    f = open("output.html", "w")
-    f.write(html)
-    f.close()
+    # f = open("output.html", "w")
+    # f.write(html)
+    # f.close()
 
     soup = BeautifulSoup(html, "html.parser")
 
@@ -80,5 +94,22 @@ def _parse_data(url):
     print(full_description)
     return ListingSerializer(data = {'name': parsed_name, 'description': parsed_description, 'url': parsed_url})
 
+
+def _load_data(url):
+    print("Loading URL: " + url)
+    if url:
+        loader = SeleniumURLLoader(urls=[url])
+        # data = loader.load()
+
+        index = VectorstoreIndexCreator().from_loaders([loader])
+
+        # chain = ConversationalRetrievalChain.from_llm(
+        #     llm=ChatOpenAI(model="gpt-3.5-turbo"),
+        #     retriever=index.as_retriever(search_kwargs={"k": 1}),
+        # )
+
+        # query = "Does this place have a good view?"
+        # result = chain({"question": query, "chat_history": []})
+        # print(result['answer'])
 
 
