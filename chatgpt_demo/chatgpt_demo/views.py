@@ -19,9 +19,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.indexes import VectorstoreIndexCreator
 
 import urllib.request
-from .constants import APIKEY
-
-os.environ["OPENAI_API_KEY"] = APIKEY
 
 @api_view(['GET', 'POST'])
 def listing_list(request):
@@ -102,6 +99,7 @@ def _load_data(url):
         # data = loader.load()
 
         index = VectorstoreIndexCreator().from_loaders([loader])
+        print("Hello")
 
         # chain = ConversationalRetrievalChain.from_llm(
         #     llm=ChatOpenAI(model="gpt-3.5-turbo"),
