@@ -12,18 +12,18 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \ChatThread.lastActivityTimestamp, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var chatThreads: FetchedResults<ChatThread>
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(items) { item in
+                ForEach(chatThreads) { chatThread in
                     NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                        Text("Test ChatThreads at \(chatThread.lastActivityTimestamp!, formatter: itemFormatter)")
                     } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+                        Text("\(chatThread.title ?? "") \(chatThread.lastActivityTimestamp!, formatter: itemFormatter)")
                     }
                 }
                 .onDelete(perform: deleteItems)
@@ -46,8 +46,9 @@ struct ContentView: View {
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            let newItem = ChatThread(context: viewContext)
+            newItem.title = "Thread \(NSUUID())"
+            newItem.lastActivityTimestamp = Date()
 
             do {
                 try viewContext.save()
@@ -62,7 +63,7 @@ struct ContentView: View {
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
+            offsets.map { chatThreads[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()
