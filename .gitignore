@@ -7,4 +7,7 @@ constants.py
 chatgpt_demo/db.sqlite3
 chatgpt_demo/chatgpt_demo/__pycache__/*
 chatgpt_demo/.env
-ChatGPTDemoiOS/ChatGPTDemo/ChatGPTDemo.xcodeproj/project.xcworkspace/xcuserdata/*
+ChatGPTDemoiOS/ChatGPTDemo/ChatGPTDemo.xcodeproj
+ChatGPTDemoiOS/ChatGPTDemo/ChatGPTDemo.xcodeproj/*
+ChatGPTDemoiOS/ChatGPTDemoApp.xcodeproj
+ChatGPTDemoiOS/bazel-*
