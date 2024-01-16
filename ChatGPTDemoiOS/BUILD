@@ -9,7 +9,7 @@ load(
 
 swift_library(
     name = "lib",
-    srcs = glob(["Sources/*.swift"]),
+    srcs = glob(["Sources/**/*.swift"]),
 )
 
 ios_application(
@@ -19,7 +19,8 @@ ios_application(
         "iphone",
         "ipad",
     ],
-    infoplists = ["Resources/Info.plist"],
+    infoplists = ["Info.plist"],
+    launch_storyboard = "//Resources:Launch.storyboard",
     minimum_os_version = "16.0",
     visibility = ["//visibility:public"],
     deps = [":lib"],

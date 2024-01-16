@@ -4,7 +4,10 @@ import SwiftUI
 struct ChatGPTDemoApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("Hello from Bazel!")
+            NavigationView {
+                ThreadView()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
