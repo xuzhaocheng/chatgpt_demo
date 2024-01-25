@@ -2,8 +2,10 @@
 
 ## Build and run from command line
 
+```
 bazel build //:ChatGPTDemoApp
 bazel run //:ChatGPTDemoApp
+```
 
 *Note: Currently the build fails to compile core data models* 
 ```
