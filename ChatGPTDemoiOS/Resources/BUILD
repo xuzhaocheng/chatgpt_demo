@@ -7,7 +7,7 @@ exports_files([
     "Main.storyboard",
 ])
 
-#filegroup(
-#    name = "PhoneAppIcon.xcassets",
-#    srcs = glob(["PhoneAppIcon.xcassets/**"]),
-#)
+filegroup(
+   name = "CoreDataModel.xcdatamodeld",
+   srcs = glob(["CoreDataModel.xcdatamodeld/**"]),
+)

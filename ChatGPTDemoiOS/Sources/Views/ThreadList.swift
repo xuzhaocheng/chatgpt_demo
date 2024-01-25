@@ -38,7 +38,7 @@ struct ThreadList_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ThreadList()
-                .environmentObject(ChatThreadViewModel())
+                .environmentObject(ChatThreadViewModel(dataManager: ChatThreadDataManager.shared))
         }
     }
 }

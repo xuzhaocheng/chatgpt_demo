@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct ChatGPTDemoApp: App {
     
-    var chatThreadViewModel: ChatThreadViewModel = ChatThreadViewModel()
+    var chatThreadViewModel: ChatThreadViewModel = ChatThreadViewModel(dataManager: ChatThreadDataManager.shared)
     
     var body: some Scene {
         WindowGroup {
