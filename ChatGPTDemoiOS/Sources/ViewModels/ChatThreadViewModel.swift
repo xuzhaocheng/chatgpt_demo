@@ -16,7 +16,7 @@ class ChatThreadViewModel: ObservableObject {
     }
     
     @Published var chatThreads: [ChatThreadModel] = [
-        ChatThreadModel(title: "Sam Smith", snippet: "Hi the Airbnb is available", status: "Canceled * Apr 11 - 14, 2022", isRead: false),
-        ChatThreadModel(title: "Mary Jane", snippet: "How are you?", status: nil, isRead: true)
+        ChatThreadModel(chatgptThreadId: nil, title: "Sam Smith", snippet: "Hi the Airbnb is available", status: "Canceled * Apr 11 - 14, 2022", isRead: false, listing: nil),
+        ChatThreadModel(chatgptThreadId: nil, title: "Mary Jane", snippet: "How are you?", status: nil, isRead: true, listing: nil)
     ]
 }

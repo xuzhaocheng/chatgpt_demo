@@ -37,7 +37,7 @@ struct ListRowView: View {
 
 struct MyPreviewProvider_Previews: PreviewProvider {
     static var previews: some View {
-        ListRowView(chatThread: ChatThreadModel(title: "John Smith", snippet: "How are you?", status: "Request widthdrawn", isRead: false))
+        ListRowView(chatThread: ChatThreadModel(chatgptThreadId: nil, title: "John Smith", snippet: "How are you?", status: "Request widthdrawn", isRead: false, listing: nil))
     }
 }
 

@@ -30,7 +30,7 @@ struct ThreadView: View {
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            ThreadView(chatThread: ChatThreadModel(title: "Sam Smith", snippet: "Hi the Airbnb is available", status: "Canceled * Apr 11 - 14, 2022", isRead: false))
+            ThreadView(chatThread: ChatThreadModel(chatgptThreadId: nil, title: "Sam Smith", snippet: "Hi the Airbnb is available", status: "Canceled * Apr 11 - 14, 2022", isRead: false, listing: nil))
         }
     }
 }

@@ -5,9 +5,10 @@ package(default_visibility = [
 exports_files([
     "Launch.storyboard",
     "Main.storyboard",
+    "listings.plist"
 ])
 
 filegroup(
-   name = "CoreDataModel.xcdatamodeld",
-   srcs = glob(["CoreDataModel.xcdatamodeld/**"]),
+   name = "ListingImages",
+   srcs = glob(["Resources/listingImages/*"]),
 )

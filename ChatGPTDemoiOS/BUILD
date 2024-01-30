@@ -1,5 +1,5 @@
 load("@rules_apple//apple:ios.bzl", "ios_application")
-load("@rules_apple//apple:resources.bzl", "apple_core_data_model")
+load("@rules_apple//apple:resources.bzl", "apple_resource_bundle")
 load("@rules_swift//swift:swift.bzl", "swift_library")
 load(
     "@rules_swift//swift/internal:swift_common.bzl",
@@ -15,15 +15,20 @@ load(
     "swift_info_support",
 )
 
-apple_core_data_model(
-   name = "coreDataModel",
-   srcs = ["//Resources:CoreDataModel.xcdatamodeld"]
+apple_resource_bundle(
+    name = "SharedResources",
+    resources = [
+        "//Resources:listings.plist",
+        "//Resources:ListingImages"
+    ]
 )
 
 swift_library(
     name = "lib",
-    srcs = glob(["Sources/**/*.swift"]) + [":coreDataModel"],
-    data = ["//Resources:CoreDataModel.xcdatamodeld"]
+    srcs = glob(["Sources/**/*.swift"]),
+    data = [
+        ":SharedResources"
+    ]
 )
 
 ios_application(
@@ -37,7 +42,9 @@ ios_application(
     launch_storyboard = "//Resources:Launch.storyboard",
     minimum_os_version = "15.0",
     visibility = ["//visibility:public"],
-    deps = [":lib"],
+    deps = [
+        ":lib"
+    ]
 )
 
 xcodeproj(
