@@ -1,5 +1,4 @@
 load("@rules_apple//apple:ios.bzl", "ios_application")
-load("@rules_apple//apple:resources.bzl", "apple_resource_bundle")
 load("@rules_swift//swift:swift.bzl", "swift_library")
 load(
     "@rules_swift//swift/internal:swift_common.bzl",
@@ -15,19 +14,12 @@ load(
     "swift_info_support",
 )
 
-apple_resource_bundle(
-    name = "SharedResources",
-    resources = [
-        "//Resources:listings.plist",
-        "//Resources:ListingImages"
-    ]
-)
-
 swift_library(
     name = "lib",
     srcs = glob(["Sources/**/*.swift"]),
     data = [
-        ":SharedResources"
+        "//Resources:listings.plist",
+        "//Resources:ListingImages"
     ]
 )
 

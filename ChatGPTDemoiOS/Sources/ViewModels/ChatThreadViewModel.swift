@@ -13,6 +13,7 @@ class ChatThreadViewModel: ObservableObject {
     
     init(dataManager: ChatThreadDataManager) {
         self.dataManager = dataManager
+        let _ = ListingDataManager.shared
     }
     
     @Published var chatThreads: [ChatThreadModel] = [

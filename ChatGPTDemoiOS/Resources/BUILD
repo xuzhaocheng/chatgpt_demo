@@ -10,5 +10,5 @@ exports_files([
 
 filegroup(
    name = "ListingImages",
-   srcs = glob(["Resources/listingImages/*"]),
+   srcs = glob(["listingImages/*.jpeg"]),
 )

@@ -13,6 +13,6 @@ struct ListingModel {
     let description: String
     let distance: String
     let availability: String
-    let rating: Float
-    let url: URL
+    let rating: String
+    let url: URL?
 }
