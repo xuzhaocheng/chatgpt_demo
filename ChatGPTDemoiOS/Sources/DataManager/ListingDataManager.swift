@@ -44,8 +44,10 @@ class ListingDataManager: NSObject {
             self.listings.append(
                 ListingModel(
                     id: listingDictionary["id"] as! String ,
+                    location: listingDictionary["location"] as! String ,
                     title: listingDictionary["title"] as! String,
                     description: listingDictionary["description"] as! String,
+                    capacity: listingDictionary["capacity"] as! String,
                     distance: listingDictionary["distance"] as! String,
                     availability: listingDictionary["availability"] as! String,
                     rating: listingDictionary["rating"] as! String,

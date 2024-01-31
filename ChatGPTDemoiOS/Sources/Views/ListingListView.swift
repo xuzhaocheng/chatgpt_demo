@@ -11,43 +11,44 @@ struct ListingListView: View {
     @EnvironmentObject var listingViewModel: ListingViewModel
     
     @State var textFieldString: String = ""
-    @State private var path: [ListingModel] = []
-    
+    @State private var currentListing: ListingModel?
+
     var body: some View {
         let listings = listingViewModel.listings
-        NavigationStack(path: $path) {
-            VStack {
-                Button(action: searchButtonAction, label: {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .frame(width: 30.0, height: 30.0)
-                        Spacer()
-                            .frame(width: 20)
-                        VStack(alignment: .leading) {
-                            Text("Where to?")
-                                .font(.system(.headline, design: .rounded))
-                            Text("Anywhere • Any week • Add guest")
-                                .font(.system(.caption, design: .rounded))
-                        }
-                        Spacer()
+        
+        VStack {
+            Button(action: searchButtonAction, label: {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 30.0, height: 30.0)
+                    Spacer()
+                        .frame(width: 20)
+                    VStack(alignment: .leading) {
+                        Text("Where to?")
+                            .font(.system(.headline, design: .rounded))
+                        Text("Anywhere • Any week • Add guest")
+                            .font(.system(.caption, design: .rounded))
                     }
-                    .modifier(SearchButtonViewModifier(roundedCorners: 30.0, textColor: Color.black))
-                }).padding(.horizontal)
-                
-                List(listings) { listing in
-                    ListingView(listing: listing)
-                        .listRowSeparator(.hidden)
-                        .padding(EdgeInsets(top: 0, leading: 12.0, bottom: 0, trailing: 12.0))
-                        .onTapGesture {
-                            path.append(listing)
-                        }
+                    Spacer()
                 }
-                .listStyle(PlainListStyle())
-                .navigationDestination(for: ListingModel.self) { listingModel in
-                    Text(listingModel.title)
-                }
+                .modifier(SearchButtonViewModifier(roundedCorners: 30.0, textColor: Color.black))
+            })
+            .padding(.horizontal)
+            
+            List(listings) { listing in
+                ListingView(listing: listing)
+                    .listRowSeparator(.hidden)
+                    .padding(EdgeInsets(top: 0, leading: 12.0, bottom: 0, trailing: 12.0))
+                    .onTapGesture {
+                        currentListing = listing
+                    }
+
             }
+            .fullScreenCover(item: $currentListing) {listing in
+                ListingDetailView(listing:listing)
+            }
+            .listStyle(PlainListStyle())
         }
     }
     

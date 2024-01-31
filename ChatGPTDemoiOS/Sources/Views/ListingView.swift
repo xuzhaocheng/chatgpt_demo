@@ -31,7 +31,7 @@ struct ListingView: View {
             }
 
             HStack(alignment: .top) {
-                Text(listing.title)
+                Text(listing.location)
                 Spacer()
                 HStack{
                     Image(systemName: "star.fill")

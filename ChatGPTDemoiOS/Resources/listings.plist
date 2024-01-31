@@ -5,8 +5,12 @@
 	<dict>
 		<key>id</key>
 		<string>49986215</string>
+		<key>location</key>
+		<string>Freedom, California</string>
 		<key>title</key>
 		<string>Camper/RV in Half Moon Bay, California</string>
+		<key>capacity</key>
+		<string>12 guests • 3 bedrooms • 6 beds • 3 baths</string>
 		<key>distance</key>
 		<string>50 miles away</string>
 		<key>availability</key>
@@ -86,8 +90,12 @@ No children please: safety reasons. 2 guest limit.</string>
 	<dict>
 		<key>id</key>
 		<string>889189502572660333</string>
+		<key>location</key>
+		<string>Austin, Texas</string>
 		<key>title</key>
 		<string>Relaxing Bay view home w/ hottub</string>
+		<key>capacity</key>
+		<string>6 guests • 2 bedrooms • 4 beds •2 baths</string>
 		<key>distance</key>
 		<string>75 miles away</string>
 		<key>availability</key>
@@ -182,8 +190,12 @@ Georgia + Asher</string>
 	<dict>
 		<key>id</key>
 		<string>680532366698763136</string>
+		<key>location</key>
+		<string>Santa Barbra, CA</string>
 		<key>title</key>
 		<string>Five Bedroom Beachfront Home in Capitola Village</string>
+		<key>capacity</key>
+		<string>12 guests • 5 bedrooms • 6 beds • 3 baths</string>
 		<key>distance</key>
 		<string>25 miles away</string>
 		<key>availability</key>
