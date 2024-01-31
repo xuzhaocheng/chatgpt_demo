@@ -7,12 +7,13 @@
 
 import Foundation
 
-struct ListingModel {
+struct ListingModel: Identifiable {
     let id: String
     let title: String
     let description: String
     let distance: String
     let availability: String
     let rating: String
-    let url: URL?
+    let url: URL
+    let images: [URL]?
 }

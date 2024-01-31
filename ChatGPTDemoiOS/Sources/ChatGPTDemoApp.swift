@@ -3,14 +3,17 @@ import SwiftUI
 @main
 struct ChatGPTDemoApp: App {
     
+    var listingViewModel: ListingViewModel = ListingViewModel(ListingDataManager.shared)
+    
     var chatThreadViewModel: ChatThreadViewModel = ChatThreadViewModel(dataManager: ChatThreadDataManager.shared)
     
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                ThreadList()
+                ListingListView()
             }
             .navigationViewStyle(StackNavigationViewStyle())
+            .environmentObject(listingViewModel)
             .environmentObject(chatThreadViewModel)
         }
     }

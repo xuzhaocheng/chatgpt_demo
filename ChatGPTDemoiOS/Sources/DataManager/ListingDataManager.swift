@@ -10,7 +10,7 @@ import Foundation
 class ListingDataManager: NSObject {
     static let shared = ListingDataManager()
     
-    private(set) var listings: [ListingModel] = []
+    @Published private(set) var listings: [ListingModel] = []
     
     override private init() {
         super.init()
@@ -30,6 +30,17 @@ class ListingDataManager: NSObject {
             
             let listingURLString = listingDictionary["url"] ?? ""
             
+            var images: [URL] = []
+            if let imageStrings = listingDictionary["images"] as? [String] {
+                for imageString in imageStrings {
+                    if let imageURL = URL(string: imageString) {
+                        images.append(imageURL)
+                    } else {
+                        print("Invalid image url: \(imageString)")
+                    }
+                }
+            }
+            
             self.listings.append(
                 ListingModel(
                     id: listingDictionary["id"] as! String ,
@@ -38,7 +49,8 @@ class ListingDataManager: NSObject {
                     distance: listingDictionary["distance"] as! String,
                     availability: listingDictionary["availability"] as! String,
                     rating: listingDictionary["rating"] as! String,
-                    url: URL(string: listingURLString as! String))
+                    url: URL(string: listingURLString as! String)!,
+                    images: images)
             )
         }
     }
