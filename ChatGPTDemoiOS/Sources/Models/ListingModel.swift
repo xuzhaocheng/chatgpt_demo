@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ListingModel: Identifiable {
+struct ListingModel: Identifiable, Hashable {
     let id: String
     let title: String
     let description: String
