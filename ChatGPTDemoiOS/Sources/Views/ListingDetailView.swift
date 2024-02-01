@@ -11,7 +11,8 @@ struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var isExpanded: Bool = false
-
+    @State private var isChatShown: Bool = false
+    
     let listing: ListingModel
     
     var body: some View {
@@ -38,62 +39,114 @@ struct ListingDetailView: View {
                     }
                 }
                 
-                VStack(alignment: .leading, spacing: 12.0)  {
+                VStack(alignment: .leading, spacing: 16.0)  {
                     Text(listing.title)
-                        .font(.system(.title3))
-                    Text("Entire home in \(listing.location)")
-                    Text(listing.capacity)
+                        .font(.system(.title2))
+                        .bold()
                     
-                    HStack(alignment: .center) {
+                    VStack(alignment: .leading) {
+                        Text("Entire home in \(listing.location)")
+                            .font(.title3)
+                            .bold()
+                        Text(listing.capacity)
+                    }
+                    
+                    // Rating, Guest Favorite, Reviews Block
+                    HStack(alignment: .top) {
                         VStack {
                             Text(listing.rating)
+                            Text(ratingToStarsText(listing.rating))
+                                .font(.title)
                         }
                         .frame(minWidth: 0, maxWidth: .infinity)
-//                            Spacer()
-                        Divider().frame(maxHeight: 32.0)
-                        VStack {
-                            Text("Guest Favorite")
+                        Divider().frame(maxHeight: 44.0)
+                        HStack {
+                            Text("🏆")
+                            VStack {
+                                Text("Guest Favorite")
+                            }
                         }
                         .frame(minWidth: 0, maxWidth: .infinity)
-//                            Spacer()
-                        Divider().frame(maxHeight: 32.0)
+                        Divider().frame(maxHeight: 44.0)
                         VStack {
                             Text("100\nReviews")
                         }
                         .frame(minWidth: 0, maxWidth: .infinity)
                     }
-//                    .padding(EdgeInsets(top: 24.0, leading: 16.0, bottom: 24.0, trailing: 16.0))
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical)
                     .overlay( /// apply a rounded border
                         RoundedRectangle(cornerRadius: 8.0)
-                            .stroke(.gray, lineWidth: 1)
+                            .stroke(Color(.init(red: 0, green: 0, blue: 0, alpha: 0.15)), lineWidth: 1)
                     )
+                    
+                    Button(
+                        action: {
+                            isChatShown = true
+                        },
+                        label: {
+                            Image(systemName: "message")
+                            Text("Ask a Question")
+                                .font(.headline)
+                        })
+                    .sheet(isPresented: $isChatShown) {
+                        let chatThreadModel =
+                        ChatThreadModel(
+                            chatgptThreadId: nil,
+                            title: listing.title,
+                            snippet: "",
+                            status: nil,
+                            isRead: false,
+                            listing: listing)
+                        NavigationView {
+                            ThreadView(chatThread: chatThreadModel)
+                        }
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                    }
+                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                    .background(Color.white)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
                 Divider()
-                Text(listing.description)
-                    .lineLimit(isExpanded ? nil : 6)
-                    .overlay(
-                        GeometryReader { proxy in
-                            Button(action: {
-                                isExpanded.toggle()
-                            }) {
-                                Text(isExpanded ? "Less" : "More")
-                                    .font(.caption).bold()
-                                    .padding(.leading, 8.0)
-                                    .padding(.top, 4.0)
-                                    .background(Color.white)
-                            }
-                            .frame(width: proxy.size.width, height: proxy.size.height, alignment: .bottomTrailing)
-                        }
-                    )
-//                Spacer()
+                VStack(alignment: .leading) {
+                    Text(listing.description)
+                        .lineLimit(isExpanded ? nil : 6)
+                    Button {
+                        isExpanded.toggle()
+                    } label: {
+                        Text(isExpanded ? "Show Less" : "Show More")
+                            .font(.caption).bold()
+                            .padding(.top, 4.0)
+                    }
+                }
+                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
+                .padding(.horizontal)
+
             }
         }
         .statusBar(hidden: true)
         .edgesIgnoringSafeArea(.top)
+    }
+    
+    private func ratingToStarsText(_ rating: String) -> String {
+        let ratingFloat = Float(rating)!
+        
+        var ratingStarsString = ""
+        
+        var i: Float = 0
+        while i < ratingFloat {
+            ratingStarsString.append("⋆")
+            i += 1
+        }
+        
+        return ratingStarsString
+    }
+    
+    private func showChatView() {
+        
     }
 }
 
