@@ -6,18 +6,32 @@
 //
 
 import Foundation
+import Combine
 
 class ChatThreadViewModel: ObservableObject {
     
-    @Published private var dataManager: ChatThreadDataManager
+    private var dataManager: ChatThreadDataManager
+    private var chatThread: ChatThreadModel
+    private var observer: AnyCancellable?
     
-    init(dataManager: ChatThreadDataManager) {
+    @Published private(set) var messages: [ChatMessageModel] = []
+    
+    init(dataManager: ChatThreadDataManager, chatThread: ChatThreadModel) {
         self.dataManager = dataManager
-        let _ = ListingDataManager.shared
+        self.chatThread = chatThread
     }
     
-    @Published var chatThreads: [ChatThreadModel] = [
-        ChatThreadModel(chatgptThreadId: nil, title: "Sam Smith", snippet: "Hi the Airbnb is available", status: "Canceled * Apr 11 - 14, 2022", isRead: false, listing: nil),
-        ChatThreadModel(chatgptThreadId: nil, title: "Mary Jane", snippet: "How are you?", status: nil, isRead: true, listing: nil)
-    ]
+    @Published var chatThreads: [ChatThreadModel] = []
+    
+    func loadMessages(_ chatThread: ChatThreadModel) {
+        observer = dataManager.loadMessages(chatThread).sink(receiveCompletion: { completion in
+            
+        }, receiveValue: { chatMessageModels in
+            self.messages = chatMessageModels
+        })
+    }
+    
+    func sendMessage(sender: Contact, message: String) {
+        let newMessage = ChatMessageModel(sender: sender, message: message, chatThread: self.chatThread)
+    }
 }

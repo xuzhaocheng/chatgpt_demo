@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GrowingTextField: View {
     @State var message: String = ""
+    var onSend: ((String) -> ())?
     
     var body: some View {
         HStack(alignment: .bottom) {
@@ -20,7 +21,7 @@ struct GrowingTextField: View {
                                 .foregroundColor(.secondary)
                         }
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 40.0))
-                    // Add maximum vertical visible line limit
+                        // Add maximum vertical visible line limit
                         .lineLimit(...4)
                 }
             }
@@ -38,6 +39,10 @@ struct GrowingTextField: View {
                             if message != "" {
                                 Button {
                                     // send something
+                                    if let sendAction = onSend  {
+                                        sendAction(message)
+                                        message = ""
+                                    }
                                 } label: {
                                     Image(systemName: "arrow.up.circle.fill")
                                         .font(.largeTitle)

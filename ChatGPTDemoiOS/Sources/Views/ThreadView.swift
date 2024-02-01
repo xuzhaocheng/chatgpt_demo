@@ -8,9 +8,18 @@
 import SwiftUI
 
 struct ThreadView: View {
+    @ObservedObject private var chatThreadViewModel: ChatThreadViewModel
+    
     var chatThread: ChatThreadModel
+    
+//    @State var messages: [ChatMessageModel] = []
     @State var textFieldText: String = ""
     @FocusState var isTextFieldFocused: Bool
+    
+    init(chatThread: ChatThreadModel) {
+        self.chatThread = chatThread
+        self.chatThreadViewModel = ChatThreadViewModel(dataManager: ChatThreadDataManager.shared, chatThread: chatThread)
+    }
     
     var body: some View {
         VStack {
@@ -19,57 +28,20 @@ struct ThreadView: View {
                 .padding(.vertical)
             Divider()
             ScrollView {
-                HStack(alignment: .top) {
-                    Image(systemName: "person.crop.circle")
-                        .resizable()
-                        .frame(width: 40.0, height: 40.0)
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text("Thuan")
-                                .bold()
-                            Text("9:24 PM")
-                        }
-                        Text("Hi how are you doing?  Is this available now?  I would like to book it")
-                    }
-                    Spacer()
-                    
+                ForEach(chatThreadViewModel.messages) { message in
+                    MessageCellView(messageModel: message)
                 }
-                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-                .padding()
             }
             .frame(alignment: .leading)
-//            .padding()
-            
-            GrowingTextField()
-//            TextField("Write a message", text: $textFieldText, onEditingChanged: _editMode)
-//                .textFieldStyle(.roundedBorder)
-//                .padding(.horizontal)
-//                .padding(.bottom)
-//                .lineLimit(5, reservesSpace: true)
-//                .frame(height: 80.0)
-//                .focused($isTextFieldFocused)
-//                .overlay {
-////                    if (isTextFieldFocused) {
-//                        HStack {
-//                            Spacer()
-//                            Button {
-//                                textFieldText = ""
-//                            } label: {
-//                                Image(systemName: "arrow.up.circle.fill")
-//                            }
-//                            .foregroundColor(.secondary)
-//                            .padding(.trailing, 24.0)
-//                            .padding(.bottom, 16.0)
-//                        }
-////                    }
-//                }
+            GrowingTextField(onSend: { message in
+                print("Sending \(message)")
+            })
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("AirGPT")
-    }
-    
-    private func _editMode(_ isEditing: Bool) {
-        
+        .task {
+            chatThreadViewModel.loadMessages(chatThread)
+        }
     }
 }
 

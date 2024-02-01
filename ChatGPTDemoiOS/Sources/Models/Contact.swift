@@ -10,9 +10,13 @@ import Foundation
 struct Contact {
     let id: String
     let name: String
+    let isSelf: Bool
+    let profilePictureUrl: URL
     
-    init(id: String = UUID().uuidString, name: String) {
+    init(id: String = UUID().uuidString, name: String, isSelf: Bool, profilePictureUrl: URL) {
         self.id = id
         self.name = name
+        self.isSelf = isSelf
+        self.profilePictureUrl = profilePictureUrl
     }
 }

@@ -90,6 +90,7 @@ struct ListingDetailView: View {
                                 .font(.headline)
                         })
                     .sheet(isPresented: $isChatShown) {
+                        // TODO: Load existing chat thread model
                         let chatThreadModel =
                         ChatThreadModel(
                             chatgptThreadId: nil,
