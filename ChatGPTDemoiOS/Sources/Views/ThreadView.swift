@@ -9,16 +9,67 @@ import SwiftUI
 
 struct ThreadView: View {
     var chatThread: ChatThreadModel
+    @State var textFieldText: String = ""
+    @FocusState var isTextFieldFocused: Bool
     
     var body: some View {
         VStack {
             Divider()
+            ThreadViewBanner(listing: chatThread.listing!)
+                .padding(.vertical)
+            Divider()
             ScrollView {
-                Text("Hello")
+                HStack(alignment: .top) {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .frame(width: 40.0, height: 40.0)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("Thuan")
+                                .bold()
+                            Text("9:24 PM")
+                        }
+                        Text("Hi how are you doing?  Is this available now?  I would like to book it")
+                    }
+                    Spacer()
+                    
+                }
+                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                .padding()
             }
+            .frame(alignment: .leading)
+//            .padding()
+            
+            GrowingTextField()
+//            TextField("Write a message", text: $textFieldText, onEditingChanged: _editMode)
+//                .textFieldStyle(.roundedBorder)
+//                .padding(.horizontal)
+//                .padding(.bottom)
+//                .lineLimit(5, reservesSpace: true)
+//                .frame(height: 80.0)
+//                .focused($isTextFieldFocused)
+//                .overlay {
+////                    if (isTextFieldFocused) {
+//                        HStack {
+//                            Spacer()
+//                            Button {
+//                                textFieldText = ""
+//                            } label: {
+//                                Image(systemName: "arrow.up.circle.fill")
+//                            }
+//                            .foregroundColor(.secondary)
+//                            .padding(.trailing, 24.0)
+//                            .padding(.bottom, 16.0)
+//                        }
+////                    }
+//                }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(chatThread.listing!.title)
+        .navigationTitle("AirGPT")
+    }
+    
+    private func _editMode(_ isEditing: Bool) {
+        
     }
 }
 
@@ -26,25 +77,7 @@ struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ThreadView(
-                chatThread:
-                    ChatThreadModel(
-                        chatgptThreadId: nil,
-                        title: "Sam Smith",
-                        snippet: "Hi the Airbnb is available",
-                        status: "Canceled * Apr 11 - 14, 2022",
-                        isRead: false,
-                        listing:
-                            ListingModel(
-                                id: "49986215",
-                                location: "Austin, TX",
-                                title: "Camper/RV in Half Moon Bay, California",
-                                description: "Test description",
-                                capacity: "12 guests • 3 bedrooms • 6 beds • 3 baths",
-                                distance: "50 miles away",
-                                availability: "5 nights * Feb 4- 9",
-                                rating: "4.97",
-                                url: URL(string: "https://www.airbnb.com/rooms/49986215")!,
-                                images: [URL(string: "https://a0.muscache.com/im/pictures/38691cf9-b5c6-4052-bc79-60ea4a6ace72.jpg?im_w=1200")!])))
+                chatThread:PreviewHelper.chatThreadModel)
         }
     }
 }

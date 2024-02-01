@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SearchButtonViewModifier: ViewModifier {
+struct RoundedCornersViewModifier: ViewModifier {
     var roundedCorners: CGFloat
     var textColor: Color
     

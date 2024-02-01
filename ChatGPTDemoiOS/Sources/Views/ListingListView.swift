@@ -32,7 +32,7 @@ struct ListingListView: View {
                     }
                     Spacer()
                 }
-                .modifier(SearchButtonViewModifier(roundedCorners: 30.0, textColor: Color.black))
+                .modifier(RoundedCornersViewModifier(roundedCorners: 30.0, textColor: Color.black))
             })
             .padding(.horizontal)
             
