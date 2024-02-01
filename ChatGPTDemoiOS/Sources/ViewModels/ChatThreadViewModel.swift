@@ -33,5 +33,6 @@ class ChatThreadViewModel: ObservableObject {
     
     func sendMessage(sender: Contact, message: String) {
         let newMessage = ChatMessageModel(sender: sender, message: message, chatThread: self.chatThread)
+        self.messages.append(newMessage)
     }
 }

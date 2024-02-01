@@ -9,7 +9,10 @@ import SwiftUI
 
 struct GrowingTextField: View {
     @State var message: String = ""
+    @FocusState var isTextFieldFocused: Bool
+    
     var onSend: ((String) -> ())?
+    var onFocusChanged: ((Bool) -> ())?
     
     var body: some View {
         HStack(alignment: .bottom) {
@@ -23,6 +26,12 @@ struct GrowingTextField: View {
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 40.0))
                         // Add maximum vertical visible line limit
                         .lineLimit(...4)
+                        .focused($isTextFieldFocused)
+                        .onChange(of: isTextFieldFocused) { isFocused in
+                            if let focusChanged = onFocusChanged {
+                                focusChanged(isFocused)
+                            }
+                        }
                 }
             }
             .padding(.vertical, 8)

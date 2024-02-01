@@ -19,7 +19,7 @@ swift_library(
     srcs = glob(["Sources/**/*.swift"]),
     data = [
         "//Resources:listings.plist",
-        "//Resources:ListingImages"
+        "//Resources:Images"
     ]
 )
 

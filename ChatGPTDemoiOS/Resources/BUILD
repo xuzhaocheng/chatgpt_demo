@@ -9,6 +9,6 @@ exports_files([
 ])
 
 filegroup(
-   name = "ListingImages",
-   srcs = glob(["listingImages/*.jpeg"]),
+   name = "Images",
+   srcs = glob(["images/*.jpeg"]),
 )

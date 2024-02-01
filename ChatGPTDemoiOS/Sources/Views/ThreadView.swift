@@ -12,9 +12,7 @@ struct ThreadView: View {
     
     var chatThread: ChatThreadModel
     
-//    @State var messages: [ChatMessageModel] = []
     @State var textFieldText: String = ""
-    @FocusState var isTextFieldFocused: Bool
     
     init(chatThread: ChatThreadModel) {
         self.chatThread = chatThread
@@ -27,21 +25,52 @@ struct ThreadView: View {
             ThreadViewBanner(listing: chatThread.listing!)
                 .padding(.vertical)
             Divider()
-            ScrollView {
-                ForEach(chatThreadViewModel.messages) { message in
-                    MessageCellView(messageModel: message)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    ForEach(chatThreadViewModel.messages, id: \.id) { message in
+                        MessageCellView(messageModel: message)
+                    }
+                    .onChange(of: chatThreadViewModel.messages) { _ in
+                        if let lastMessage = _lastMessage() {
+                            withAnimation(.spring()) {
+                                proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                            }
+                        }
+                    }
                 }
+                .frame(alignment: .leading)
+                
+                GrowingTextField(
+                    onSend: { message in
+                        chatThreadViewModel.sendMessage(sender: PreviewHelper.selfContact, message: message)
+                    },
+                    onFocusChanged: { isFocused in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            if isFocused,
+                               let lastMessage = _lastMessage() {
+
+                                withAnimation(.spring()) {
+                                    proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                                }
+                            }
+                        }
+                    }
+                );
             }
-            .frame(alignment: .leading)
-            GrowingTextField(onSend: { message in
-                print("Sending \(message)")
-            })
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("AirGPT")
         .task {
             chatThreadViewModel.loadMessages(chatThread)
         }
+    }
+    
+    private func _lastMessage() -> ChatMessageModel? {
+        guard chatThreadViewModel.messages.count != 0 else {
+            return nil
+        }
+        
+        return chatThreadViewModel.messages[chatThreadViewModel.messages.count - 1]
     }
 }
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChatThreadModel: Identifiable {
+struct ChatThreadModel: Identifiable, Hashable {
     let id: String
     let chatgptThreadId: String?
     let title: String
