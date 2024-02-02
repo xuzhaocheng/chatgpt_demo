@@ -42,7 +42,7 @@ struct ThreadView: View {
                 
                 GrowingTextField(
                     onSend: { message in
-                        chatThreadViewModel.sendMessage(sender: PreviewHelper.selfContact, message: message)
+                        chatThreadViewModel.sendMessage(chatThread: chatThread, sender: PreviewHelper.selfContact, message: message)
                     },
                     onFocusChanged: { isFocused in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

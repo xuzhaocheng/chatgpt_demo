@@ -36,7 +36,7 @@ struct PreviewHelper {
         let chatThreadModel = chatThreadModel;
 
         let selfSender = PreviewHelper.selfContact
-        let airGPT = Contact(name: "AirGPT", isSelf: false, profilePictureUrl: nil)
+        let airGPT = PreviewHelper.airGPTContact
 
         return [
             ChatMessageModel(sender: airGPT, message: "Hi this is AirGPT assistant, how can I help you?", chatThread: chatThreadModel),
@@ -47,5 +47,9 @@ struct PreviewHelper {
     
     static var selfContact: Contact {
         Contact(name: "Thuan", isSelf: true, profilePictureUrl: Bundle.main.url(forResource: "thuan", withExtension: "jpeg")!)
+    }
+    
+    static var airGPTContact: Contact {
+        Contact(name: "AirGPT", isSelf: false, profilePictureUrl: nil)
     }
 }

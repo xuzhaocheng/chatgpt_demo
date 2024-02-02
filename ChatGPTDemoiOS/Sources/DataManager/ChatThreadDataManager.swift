@@ -9,12 +9,12 @@ import Foundation
 import Combine
 
 class ChatThreadDataManager: NSObject, ObservableObject {
-    static let shared = ChatThreadDataManager(chatGPTDataManager: ChatGPTDataManager.shared)
+    static let shared = ChatThreadDataManager(chatGPTDataManager: ChatGPTHTTPClient.shared)
     
-    var chatGPTDataManager: ChatGPTDataManager
+    var chatGPTDataManager: ChatGPTHTTPClient
 //    @Published private(set) var messages: [ChatMessageModel] = []
     
-    init(chatGPTDataManager: ChatGPTDataManager) {
+    init(chatGPTDataManager: ChatGPTHTTPClient) {
         self.chatGPTDataManager = chatGPTDataManager
     }
     
