@@ -14,6 +14,7 @@ class ChatGPTHTTPClient {
     
     let baseURL = "https://api.openai.com/v1"
     
+    private let maxPollRetry: Int = 5
     private let openAIAPIKey: String
     private let assistantID: String
     
@@ -43,8 +44,8 @@ class ChatGPTHTTPClient {
         self.assistantID = aID
     }
 
-    func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<[ChatMessageModel], Error> {
-        return Future { promixe in
+    func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<ChatGPTAssistantRunResponse, Error> {
+        Future { promixe in
             let params: [String: Any] = [
                 "role": "user",
                 "content": prompt
@@ -54,14 +55,12 @@ class ChatGPTHTTPClient {
                 .validate()
                 .responseDecodable(of: ChatGPTMessagesPostResponse.self) { response in
                     switch response.result {
-                        case .success(let chatGPTResponse):
-                            print("Messsage success: \(chatGPTResponse.id)")
+                        case .success(let chatGPTMessagePostResponse):
+                            print("Messsage send success: \(chatGPTMessagePostResponse.id)")
                             self._triggerAssistantRun(chatgptThreadId: chatgptThreadId) { assistantRunResult in
                                 switch assistantRunResult {
-                                case .success:
-                                    promixe(.success([
-                                        ChatMessageModel(sender: PreviewHelper.airGPTContact, message: "Please wait, processing....", chatThread: chatThread)
-                                    ]))
+                                case .success(let chatGPTAssistantRunResponse):
+                                    promixe(.success(chatGPTAssistantRunResponse))
                                 case .failure(let error):
                                     promixe(.failure(error))
                                 }
@@ -74,20 +73,63 @@ class ChatGPTHTTPClient {
             }
     }
     
-    private func _triggerAssistantRun(chatgptThreadId: String, completion: @escaping (Result<String, Error>) -> Void) {
+    private func _triggerAssistantRun(chatgptThreadId: String, completion: @escaping (Result<ChatGPTAssistantRunResponse, Error>) -> Void) {
         let params: [String: Any] = [
             "assistant_id": "\(assistantID)",
         ]
         
         AF.request(baseURL + "/threads/\(chatgptThreadId)/runs", method: .post, parameters: params, encoding: JSONEncoding.default, headers: _headers())
             .validate()
-            .responseDecodable(of: ChatGPTAssistantRunPostResponse.self) { response in
+            .responseDecodable(of: ChatGPTAssistantRunResponse.self) { response in
                 switch response.result {
-                case .success(let chatGPTResponse):
-                    print("Run Assistant success: \(chatGPTResponse.id)")
-                    completion(.success(chatGPTResponse.id)) // Return run_id
+                case .success(let chatGPTAssistantRunResponse):
+                    print("Run Assistant success: \(chatGPTAssistantRunResponse.id)")
+                    completion(.success(chatGPTAssistantRunResponse))
                 case .failure(let error):
                     print("Error while running assistant: \(String(describing: error))")
+                    completion(.failure(error))
+                }
+            }
+    }
+    
+    func pollRun(chatgptThreadId: String, runId: String) -> Future<ChatGPTAssistantRunResponse, Error> {
+        let retries = 0
+        
+        return
+        Future<ChatGPTAssistantRunResponse, Error> { promixe in
+            self._pollRunTry(chatgptThreadId: chatgptThreadId, runId: runId, tryNumber: retries) { result in
+                switch result {
+                case .success(let chatGPTAssistantRunRespons):
+                    promixe(.success(chatGPTAssistantRunRespons))
+                case .failure(let error):
+                    promixe(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func _pollRunTry(chatgptThreadId: String, runId: String, tryNumber: Int, completion: @escaping (Result<ChatGPTAssistantRunResponse, Error>) -> Void)  {
+        guard tryNumber <= maxPollRetry else {   // Stop when we reach max number of polling tries
+            completion(.failure(NSError(domain: "com.midoriapple.chatgptdemo", code: 0, userInfo: [NSLocalizedDescriptionKey : "Max number of retries reached"])))
+            return
+        }
+        
+        AF.request(self.baseURL + "/threads/\(chatgptThreadId)/runs/\(runId)", method: .get, parameters: nil, encoding: JSONEncoding.default, headers: self._headers())
+            .validate()
+            .responseDecodable(of: ChatGPTAssistantRunResponse.self) { response in
+                switch response.result {
+                case .success(let chatGPTResponse):
+                    if chatGPTResponse.status == "completed" {
+                        completion(.success(chatGPTResponse))
+                        return
+                    }
+                    
+                    let waitDuration: Int = NSDecimalNumber(decimal: pow(2, tryNumber)).intValue
+                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(waitDuration)) {
+                        self._pollRunTry(chatgptThreadId: chatgptThreadId, runId: runId, tryNumber: tryNumber+1, completion: completion)
+                    }
+                    
+                case .failure(let error):
                     completion(.failure(error))
                 }
             }
@@ -99,37 +141,5 @@ class ChatGPTHTTPClient {
            "Authorization": "Bearer \(self.openAIAPIKey)",
            "OpenAI-Beta": "assistants=v1"
        ]
-    }
-    
-    struct ChatGPTMessagesPostResponse: Codable {
-        let id: String
-        let thread_id: String
-        let role: String
-        let content: [ResponseContent]
-        
-        struct ResponseContent: Codable {
-            let type: String
-            let text: ResponseText
-        }
-        
-        struct ResponseText: Codable {
-            let value: String
-            let annotations: [String]
-        }
-    }
-    
-    struct ChatGPTAssistantRunPostResponse: Codable {
-        let id: String
-        let assistant_id: String
-        let thread_id: String
-        let status: String
-        let expires_at: Int?
-        let cancelled_at: Int?
-        let failed_at: Int?
-        let completed_at: Int?
-        let last_error: String?
-        let model: String
-        let instructions: String
-        let file_ids: [String]?
     }
 }

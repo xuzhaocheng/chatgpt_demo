@@ -14,6 +14,7 @@ class ChatThreadViewModel: ObservableObject {
     private var chatThread: ChatThreadModel
     private var loadMessageObserver: AnyCancellable?
     private var sendMessageObserver: AnyCancellable?
+    private var pollRunObserver: AnyCancellable?
     
     @Published private(set) var messages: [ChatMessageModel] = []
     
@@ -39,9 +40,36 @@ class ChatThreadViewModel: ObservableObject {
         
         sendMessageObserver = ChatGPTHTTPClient.shared.sendMessage(chatThread: chatThread, chatgptThreadId: "thread_2qHdTgx7WjKuuer7CuzWCBM7", prompt: message)
             .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    print("Send Message Complete")
+                case .failure(let error):
+                    print("Send Message Failed \(error)")
+                }
                 // Handle completion
-            }, receiveValue: { chatMessageModels in
-                self.messages.append(contentsOf: chatMessageModels)
+            }, receiveValue: { chatGPTAssistantRunResponse in
+                if chatGPTAssistantRunResponse.status != "completed" {
+                    let chatMessage = ChatMessageModel(sender: PreviewHelper.airGPTContact, message: "Please wait, processing....", chatThread: chatThread)
+                    self.messages.append(chatMessage)
+                }
+                
+                // Start Polling run
+                print("Polling run \(chatGPTAssistantRunResponse.id)")
+                self.pollRunObserver = ChatGPTHTTPClient.shared.pollRun(chatgptThreadId: chatGPTAssistantRunResponse.thread_id, runId: chatGPTAssistantRunResponse.id)
+                    .sink(receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            print("Polling run finished")
+                        case .failure(let error):
+                            print("Polling run failed \(error)")
+                        }
+                    }, receiveValue: { chatGPTAssistantRunResponse in
+                        print("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
+                        
+                        let chatMessage = ChatMessageModel(sender: PreviewHelper.airGPTContact, message: "Polling run completed with status: \(chatGPTAssistantRunResponse.status)", chatThread: chatThread)
+                        self.messages.append(chatMessage)
+                    })
+
             })
     }
 }
