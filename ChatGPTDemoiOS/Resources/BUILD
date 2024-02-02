@@ -5,10 +5,10 @@ package(default_visibility = [
 exports_files([
     "Launch.storyboard",
     "Main.storyboard",
-    "listings.plist"
+    "listings.plist",
 ])
 
 filegroup(
-   name = "Images",
-   srcs = glob(["images/*.jpeg"]),
+    name = "Images",
+    srcs = glob(["images/*.jpeg"]),
 )

@@ -4,7 +4,6 @@ import SwiftUI
 struct ChatGPTDemoApp: App {
     
     var listingViewModel: ListingViewModel = ListingViewModel(ListingDataManager.shared)
-//    var chatThreadViewModel: ChatThreadViewModel = ChatThreadViewModel(dataManager: ChatThreadDataManager.shared)
     
     var body: some Scene {
         WindowGroup {
@@ -13,7 +12,6 @@ struct ChatGPTDemoApp: App {
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(listingViewModel)
-//            .environmentObject(chatThreadViewModel)
         }
     }
 }

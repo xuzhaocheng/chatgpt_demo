@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 class ChatGPTDataManager {
     static let shared = ChatGPTDataManager()
