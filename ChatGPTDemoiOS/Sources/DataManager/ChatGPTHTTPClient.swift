@@ -22,19 +22,21 @@ class ChatGPTHTTPClient {
         var aID: String = ""
         
         if let infoDictionary: [String: Any] = Bundle.main.infoDictionary {
-            if let v: String = infoDictionary["OpenAIAPIKey"] as? String {
+            if let v: String = infoDictionary["OpenAIAPIKey"] as? String,
+               v != "" {
                 apiKey = v
             } else {
-                print("Error Getting API Keys")
+                fatalError("Error Getting OpenAIAPIKey from Info.plist")
             }
             
-            if let v: String = infoDictionary["OpenAIAssistantId"] as? String {
+            if let v: String = infoDictionary["OpenAIAssistantId"] as? String,
+               v != "" {
                 aID = v
             } else {
-                print("Error Getting Assistant ID")
+                fatalError("Error Getting OpenAIAssistantId from Info.plistD")
             }
         } else {
-            print("Error Reading main info.plist")
+            fatalError("Error Reading Info.plist")
         }
         
         self.openAIAPIKey = apiKey

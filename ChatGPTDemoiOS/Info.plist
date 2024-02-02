@@ -45,8 +45,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>OpenAIAPIKey</key>
-	<string>ADD_OPEN_AI_API_KEY</string>
+	<string></string>
 	<key>OpenAIAssistantId</key>
-	<string>ADD_OPEN_AI_ASSISTANT_ID</string>
+	<string></string>
 </dict>
 </plist>
