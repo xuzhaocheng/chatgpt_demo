@@ -13,11 +13,33 @@ class ChatGPTHTTPClient {
     static let shared = ChatGPTHTTPClient()
     
     let baseURL = "https://api.openai.com/v1"
-    let headers: HTTPHeaders = [
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ",
-        "OpenAI-Beta": "assistants=v1"
-    ]
+    
+    private let openAIAPIKey: String
+    private let assistantID: String
+    
+    init() {
+        var apiKey: String = ""
+        var aID: String = ""
+        
+        if let infoDictionary: [String: Any] = Bundle.main.infoDictionary {
+            if let v: String = infoDictionary["OpenAIAPIKey"] as? String {
+                apiKey = v
+            } else {
+                print("Error Getting API Keys")
+            }
+            
+            if let v: String = infoDictionary["OpenAIAssistantId"] as? String {
+                aID = v
+            } else {
+                print("Error Getting Assistant ID")
+            }
+        } else {
+            print("Error Reading main info.plist")
+        }
+        
+        self.openAIAPIKey = apiKey
+        self.assistantID = aID
+    }
 
     func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<[ChatMessageModel], Error> {
         return Future { promixe in
@@ -26,7 +48,7 @@ class ChatGPTHTTPClient {
                 "content": prompt
             ]
             
-            AF.request(self.baseURL + "/threads/\(chatgptThreadId)/messages", method: .post, parameters: params, encoding: JSONEncoding.default, headers: self.headers)
+            AF.request(self.baseURL + "/threads/\(chatgptThreadId)/messages", method: .post, parameters: params, encoding: JSONEncoding.default, headers: self._headers())
                 .validate()
                 .responseDecodable(of: ChatGPTMessagesPostResponse.self) { response in
                     switch response.result {
@@ -50,12 +72,12 @@ class ChatGPTHTTPClient {
             }
     }
     
-    func _triggerAssistantRun(chatgptThreadId: String, completion: @escaping (Result<String, Error>) -> Void) {
+    private func _triggerAssistantRun(chatgptThreadId: String, completion: @escaping (Result<String, Error>) -> Void) {
         let params: [String: Any] = [
-            "assistant_id": "",
+            "assistant_id": "\(assistantID)",
         ]
         
-        AF.request(baseURL + "/threads/\(chatgptThreadId)/runs", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+        AF.request(baseURL + "/threads/\(chatgptThreadId)/runs", method: .post, parameters: params, encoding: JSONEncoding.default, headers: _headers())
             .validate()
             .responseDecodable(of: ChatGPTAssistantRunPostResponse.self) { response in
                 switch response.result {
@@ -67,6 +89,14 @@ class ChatGPTHTTPClient {
                     completion(.failure(error))
                 }
             }
+    }
+    
+    private func _headers() -> HTTPHeaders {
+        [
+           "Content-Type": "application/json",
+           "Authorization": "Bearer \(self.openAIAPIKey)",
+           "OpenAI-Beta": "assistants=v1"
+       ]
     }
     
     struct ChatGPTMessagesPostResponse: Codable {
