@@ -44,7 +44,7 @@ class ChatGPTHTTPClient {
         self.assistantID = aID
     }
 
-    func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<ChatGPTAssistantRunResponse, Error> {
+    func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<(ChatGPTMessagesPostResponse, ChatGPTAssistantRunResponse), Error> {
         Future { promixe in
             let params: [String: Any] = [
                 "role": "user",
@@ -60,7 +60,7 @@ class ChatGPTHTTPClient {
                             self._triggerAssistantRun(chatgptThreadId: chatgptThreadId) { assistantRunResult in
                                 switch assistantRunResult {
                                 case .success(let chatGPTAssistantRunResponse):
-                                    promixe(.success(chatGPTAssistantRunResponse))
+                                    promixe(.success((chatGPTMessagePostResponse, chatGPTAssistantRunResponse)))
                                 case .failure(let error):
                                     promixe(.failure(error))
                                 }
@@ -133,6 +133,25 @@ class ChatGPTHTTPClient {
                     completion(.failure(error))
                 }
             }
+    }
+    
+    func queryNextMessages(chatgptThreadId: String, messageId: String) -> Future<ChatGPTMessageListResponse, Error> {
+        return
+        Future<ChatGPTMessageListResponse, Error> { promixe in
+            let url = self.baseURL + "/threads/\(chatgptThreadId)/messages?order=asc&after=\(messageId)"
+            print("URL: \(url)")
+            
+            AF.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: self._headers())
+                .validate()
+                .responseDecodable(of: ChatGPTMessageListResponse.self) { response in
+                    switch response.result {
+                    case .success(let chatGPTMessageListResponse):
+                        promixe(.success(chatGPTMessageListResponse))
+                    case .failure(let error):
+                        promixe(.failure(error))
+                    }
+                }
+        }
     }
     
     private func _headers() -> HTTPHeaders {

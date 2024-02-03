@@ -35,6 +35,6 @@ struct ThreadViewBanner: View {
 
 struct ThreadViewBanner_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadViewBanner(listing: PreviewHelper.listing)
+        ThreadViewBanner(listing: MockDataHelper.mockListing)
     }
 }

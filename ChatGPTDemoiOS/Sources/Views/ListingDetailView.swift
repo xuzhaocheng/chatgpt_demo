@@ -56,7 +56,7 @@ struct ListingDetailView: View {
                         VStack {
                             Text(listing.rating)
                             Text(ratingToStarsText(listing.rating))
-                                .font(.title)
+                                .font(.system(.caption))
                         }
                         .frame(minWidth: 0, maxWidth: .infinity)
                         Divider().frame(maxHeight: 44.0)
@@ -139,7 +139,7 @@ struct ListingDetailView: View {
         
         var i: Float = 0
         while i < ratingFloat {
-            ratingStarsString.append("⋆")
+            ratingStarsString.append("★")
             i += 1
         }
         
@@ -157,7 +157,7 @@ struct ListingDetailView_Previews: PreviewProvider {
         
         NavigationView {
             ListingDetailView(
-                listing:PreviewHelper.listing)
+                listing:MockDataHelper.mockListing)
         }
     }
 }

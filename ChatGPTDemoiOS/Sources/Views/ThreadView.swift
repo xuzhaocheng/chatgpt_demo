@@ -42,7 +42,7 @@ struct ThreadView: View {
                 
                 GrowingTextField(
                     onSend: { message in
-                        chatThreadViewModel.sendMessage(chatThread: chatThread, sender: PreviewHelper.selfContact, message: message)
+                        chatThreadViewModel.sendMessage(chatThread: chatThread, sender: MockDataHelper.selfContact, message: message)
                     },
                     onFocusChanged: { isFocused in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -78,7 +78,7 @@ struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ThreadView(
-                chatThread:PreviewHelper.chatThreadModel)
+                chatThread:MockDataHelper.mockChatThreadModel)
         }
     }
 }

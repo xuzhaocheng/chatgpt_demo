@@ -9,27 +9,29 @@ import SwiftUI
 
 struct MessageCellView: View {
     var messageModel: ChatMessageModel
+    private let dateFormatter: DateFormatter = DateFormatter()
+    
+    init(messageModel: ChatMessageModel) {
+        self.messageModel = messageModel
+        self.dateFormatter.dateFormat = "hh:mm a"
+    }
     
     var body: some View {
         HStack(alignment: .top) {
             ProfilePictureView(messageModel.sender.profilePictureUrl)
-//            if let uiImage = UIImage(contentsOfFile: messageModel.sender.profilePictureUrl.path()) {
-//                Image(uiImage: uiImage)
-//                    .resizable()
-//                    .frame(width: 40.0, height: 40.0)
-//            } else {
-//                Image(systemName: "person.crop.circle")
-//                    .resizable()
-//                    .frame(width: 40.0, height: 40.0)
-//            }
-            
+
             VStack(alignment: .leading) {
                 HStack {
                     Text(messageModel.sender.name)
                         .bold()
-                    Text("9:24 PM")
+                    Text(dateFormatter.string(from: Date(timeIntervalSince1970: messageModel.sentTimestamp)))
                 }
-                Text(messageModel.message)
+                
+                if messageModel.type == .placeholder {
+                    LoadingCirclesView()
+                } else {
+                    Text(messageModel.message)
+                }
             }
             Spacer()
             

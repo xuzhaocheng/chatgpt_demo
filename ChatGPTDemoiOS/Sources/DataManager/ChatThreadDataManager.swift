@@ -20,9 +20,7 @@ class ChatThreadDataManager: NSObject, ObservableObject {
     
     func loadMessages(_ chatThread: ChatThreadModel) -> Future<[ChatMessageModel], Error> {
         return Future { promixe in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                promixe(.success(PreviewHelper.messages))
-            }
+            promixe(.success(MockDataHelper.initialWelcomeMessages))
         }
     }
 }

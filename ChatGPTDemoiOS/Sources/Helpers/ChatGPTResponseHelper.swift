@@ -40,8 +40,27 @@ struct ChatGPTAssistantRunResponse: Codable {
     let file_ids: [String]?
 }
 
+struct ChatGPTMessageListResponse: Codable {
+    let data: [ChatGPTMessage]?
+}
+
+struct ChatGPTMessage: Codable {
+    let id: String
+    let thread_id: String
+    let role: String
+    let content: [ChatGPTMessageContent]
+}
+
+struct ChatGPTMessageContent: Codable {
+    let type: String
+    let text: ChatGPTMessageContentText
+}
+
+struct ChatGPTMessageContentText: Codable {
+    let value: String
+}
+
+
 struct ChatGPTResponseHelper {
     static let shared = ChatGPTResponseHelper()
-    
-    
 }
