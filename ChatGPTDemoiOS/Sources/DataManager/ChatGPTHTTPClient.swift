@@ -158,10 +158,13 @@ class ChatGPTHTTPClient {
             }
     }
     
-    func queryNextMessages(chatgptThreadId: String, messageId: String) -> Future<ChatGPTMessageListResponse, Error> {
-        return
+    func queryNextMessages(chatgptThreadId: String, messageId: String?) -> Future<ChatGPTMessageListResponse, Error> {
         Future<ChatGPTMessageListResponse, Error> { promixe in
-            let url = self.baseURL + "/threads/\(chatgptThreadId)/messages?order=asc&after=\(messageId)"
+            
+            var url = self.baseURL + "/threads/\(chatgptThreadId)/messages?order=asc"
+            if let mId = messageId {
+                url += "&after=\(mId)"
+            }
             print("URL: \(url)")
             
             AF.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: self._headers())

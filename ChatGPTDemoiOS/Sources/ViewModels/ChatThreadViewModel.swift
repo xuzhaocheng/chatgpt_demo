@@ -41,7 +41,7 @@ class ChatThreadViewModel: ObservableObject {
                     case .success(_):
                         // Tell ChatGPT to tell it to be an assistant to current listing
                         let trainingMessage = ChatGPTHTTPClient.shared.trainingMessage(chatThread: self.chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!)
-                        self.sendMessage(addToMessageList: false, chatThread: chatThread, sender: MockDataHelper.selfContact, message: trainingMessage)
+                        self.sendMessage(shouldAddToMessageList: false, chatThread: chatThread, sender: MockDataHelper.selfContact, message: trainingMessage)
                         promixe(.success(self.chatThread))
                     case .failure(let error):
                         promixe(.failure(error))
@@ -50,7 +50,7 @@ class ChatThreadViewModel: ObservableObject {
                 return
             }
             
-            self._loadMessages(self.chatThread)
+            self._loadNextMessages(messageId: nil, includeRoles: ["assistant", "user"])
             promixe(.success(self.chatThread))
         }
     }
@@ -67,27 +67,29 @@ class ChatThreadViewModel: ObservableObject {
                 }
             }, receiveValue: { chatGPTThreadCreateResponse in
                 self.chatThread = self.chatThread.updateChatGPTThreadId(chatGPTThreadCreateResponse.id)
+                ChatThreadDataManager.shared.addCachedChatGPTThreadId(listingId: self.chatThread.listing!.id, chatGPTThreadId: chatGPTThreadCreateResponse.id)
                 completion(.success(self.chatThread))
             })
     }
     
     private func _loadMessages(_ chatThread: ChatThreadModel) {
-        loadMessageObserver = dataManager.loadThread(chatThread)
-            .sink(receiveCompletion: { completion in
-                // Handle completion
-            }, receiveValue: { chatMessageModels in
-                self.messages = chatMessageModels
-        })
+        _loadNextMessages(messageId: nil, includeRoles: ["assistant", "user"])
+//        loadMessageObserver = dataManager.loadThread(chatThread)
+//            .sink(receiveCompletion: { completion in
+//                // Handle completion
+//            }, receiveValue: { chatMessageModels in
+//                self.messages = chatMessageModels
+//        })
     }
     
-    func sendMessage(addToMessageList: Bool = true, chatThread: ChatThreadModel, sender: Contact, message: String) {
+    func sendMessage(shouldAddToMessageList: Bool = true, chatThread: ChatThreadModel, sender: Contact, message: String) {
         guard let threadId = self.chatThread.chatgptThreadId else {
             return
         }
         
         let newMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: sender, message: message, chatThread: self.chatThread)
         
-        if addToMessageList {
+        if shouldAddToMessageList {
             self.messages.append(newMessage)
         }
         
@@ -119,13 +121,13 @@ class ChatThreadViewModel: ObservableObject {
                         }
                     }, receiveValue: { chatGPTAssistantRunResponse in
                         print("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
-                        self._loadNextMessages(chatGPTMessagesPostResponse.id)
+                        self._loadNextMessages(messageId: chatGPTMessagesPostResponse.id)
                     })
 
             })
     }
     
-    private func _loadNextMessages(_ messageId: String) {
+    private func _loadNextMessages(messageId: String?, includeRoles: [String] = ["assistant"]) {
         self.queryNextMessagesObserver = ChatGPTHTTPClient.shared.queryNextMessages(chatgptThreadId: self.chatThread.chatgptThreadId!, messageId: messageId)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -139,24 +141,31 @@ class ChatThreadViewModel: ObservableObject {
                     return
                 }
                 
-                self._loadChatGPTMessages(messages)
+                self._loadChatGPTMessages(messages, includeRoles: includeRoles)
             })
     }
     
-    private func _loadChatGPTMessages(_ chatGPTMessages: [ChatGPTMessage]?) {
+    private func _loadChatGPTMessages(_ chatGPTMessages: [ChatGPTMessage]?, includeRoles: [String]) {
         guard let messages = chatGPTMessages else {
             return
         }
         
         self._removeAllPlaceholderMessages()
         
-        for m in messages {
-            if m.role == "assistant" {
-                if (m.content.count > 0) {
-                    let chatMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: MockDataHelper.airGPTContact, message: m.content.first!.text.value, chatThread: chatThread)
-                    self.messages.append(chatMessage)
-                }
+        for (index, m) in messages.enumerated() {
+            guard includeRoles.contains(m.role),
+                  m.content.count > 0 else {
+                continue
             }
+            
+            if index == 0 && m.role == "user" {
+                continue // HACK for demo purposes to not show the first user message, since this first message is the training prompt
+            }
+            
+            let contact = m.role == "user" ? MockDataHelper.selfContact : MockDataHelper.airGPTContact
+            
+            let chatMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: contact, message: m.content.first!.text.value, chatThread: chatThread)
+            self.messages.append(chatMessage)
         }
     }
     
