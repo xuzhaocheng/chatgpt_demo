@@ -40,15 +40,9 @@ class ChatThreadViewModel: ObservableObject {
                     switch result {
                     case .success(_):
                         // Tell ChatGPT to tell it to be an assistant to current listing
-                        self._sendChatGPTTrainingMessage { trainingMessageResult in
-                            switch trainingMessageResult {
-                            case .success(_):
-                                promixe(.success(self.chatThread))
-                            case .failure(let trainingMessageError):
-                                promixe(.failure(trainingMessageError))
-                            }
-                        }
-                        
+                        let trainingMessage = ChatGPTHTTPClient.shared.trainingMessage(chatThread: self.chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!)
+                        self.sendMessage(addToMessageList: false, chatThread: chatThread, sender: MockDataHelper.selfContact, message: trainingMessage)
+                        promixe(.success(self.chatThread))
                     case .failure(let error):
                         promixe(.failure(error))
                     }
@@ -77,20 +71,6 @@ class ChatThreadViewModel: ObservableObject {
             })
     }
     
-    private func _sendChatGPTTrainingMessage(_ completion: @escaping (Result<ChatThreadModel, Error>) -> Void) {
-        trainingMessageObserver = ChatGPTHTTPClient.shared.sendTrainingMessage(chatThread: self.chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!)
-            .sink(receiveCompletion: { results in
-                switch results {
-                case .finished:
-                    break
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }, receiveValue: { chatGPTMessagesPostResponse, chatGPTAssistantRunResponse in
-                self._loadNextMessages(chatGPTMessagesPostResponse.id)
-            })
-    }
-    
     private func _loadMessages(_ chatThread: ChatThreadModel) {
         loadMessageObserver = dataManager.loadThread(chatThread)
             .sink(receiveCompletion: { completion in
@@ -100,13 +80,16 @@ class ChatThreadViewModel: ObservableObject {
         })
     }
     
-    func sendMessage(chatThread: ChatThreadModel, sender: Contact, message: String) {
+    func sendMessage(addToMessageList: Bool = true, chatThread: ChatThreadModel, sender: Contact, message: String) {
         guard let threadId = self.chatThread.chatgptThreadId else {
             return
         }
         
         let newMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: sender, message: message, chatThread: self.chatThread)
-        self.messages.append(newMessage)
+        
+        if addToMessageList {
+            self.messages.append(newMessage)
+        }
         
         sendMessageObserver = ChatGPTHTTPClient.shared.sendMessage(chatThread: chatThread, chatgptThreadId: threadId, prompt: message)
             .sink(receiveCompletion: { completion in

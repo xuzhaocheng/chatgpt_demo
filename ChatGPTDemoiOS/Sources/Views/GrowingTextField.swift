@@ -17,22 +17,20 @@ struct GrowingTextField: View {
     var body: some View {
         HStack(alignment: .bottom) {
             HStack(spacing: 8) {
-                withAnimation(.easeInOut) {
-                    TextField("", text: $message, axis: .vertical)
-                        .placeholder(when: message.isEmpty) {
-                            Text("Write a message")
-                                .foregroundColor(.secondary)
+                TextField("", text: $message, axis: .vertical)
+                    .placeholder(when: message.isEmpty) {
+                        Text("Write a message")
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 40.0))
+                    // Add maximum vertical visible line limit
+                    .lineLimit(...4)
+                    .focused($isTextFieldFocused)
+                    .onChange(of: isTextFieldFocused) { isFocused in
+                        if let focusChanged = onFocusChanged {
+                            focusChanged(isFocused)
                         }
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 40.0))
-                        // Add maximum vertical visible line limit
-                        .lineLimit(...4)
-                        .focused($isTextFieldFocused)
-                        .onChange(of: isTextFieldFocused) { isFocused in
-                            if let focusChanged = onFocusChanged {
-                                focusChanged(isFocused)
-                            }
-                        }
-                }
+                    }
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
@@ -80,7 +78,6 @@ struct GrowingTextField: View {
         .frame(maxWidth: .infinity)
         .frame(minHeight: 55)
         .ignoresSafeArea()
-        .animation(.easeInOut(duration: 0.3), value: message)
     }
 }
 

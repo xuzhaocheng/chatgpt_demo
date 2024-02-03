@@ -63,12 +63,8 @@ class ChatGPTHTTPClient {
         }
     }
     
-    func sendTrainingMessage(chatThread: ChatThreadModel, chatgptThreadId: String) -> Future<(ChatGPTMessagesPostResponse, ChatGPTAssistantRunResponse), Error> {
-        let chatGPTTrainingPrompt = "You are an AI Chatbot for AirBnB.  You will answer questions on a listing with this descrption \"\(chatThread.listing!.description)\""
-        
-        return sendMessage(chatThread: chatThread,
-                           chatgptThreadId: chatgptThreadId,
-                           prompt: chatGPTTrainingPrompt)
+    func trainingMessage(chatThread: ChatThreadModel, chatgptThreadId: String) -> String {
+        "You are an AI Chatbot for AirBnB.  You will answer questions on a listing with this description \"\(chatThread.listing!.description)\".  Greet the user with a short and friendly welcome message. The welcome message should not mention about the detailed description the user has provided."
     }
 
     func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<(ChatGPTMessagesPostResponse, ChatGPTAssistantRunResponse), Error> {
