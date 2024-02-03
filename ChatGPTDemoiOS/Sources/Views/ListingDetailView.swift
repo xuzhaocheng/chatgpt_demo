@@ -114,7 +114,7 @@ struct ListingDetailView: View {
                 Divider()
                 VStack(alignment: .leading) {
                     Text(listing.description)
-                        .lineLimit(isExpanded ? nil : 6)
+                        .lineLimit(isExpanded ? nil : 10)
                     Button {
                         isExpanded.toggle()
                     } label: {

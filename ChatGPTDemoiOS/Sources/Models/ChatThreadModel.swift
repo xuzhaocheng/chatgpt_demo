@@ -25,4 +25,13 @@ struct ChatThreadModel: Identifiable, Hashable {
         self.isRead = isRead
         self.listing = listing
     }
+    
+    func updateChatGPTThreadId(_ chatgptThreadId: String) -> ChatThreadModel {
+        ChatThreadModel(chatgptThreadId: chatgptThreadId,
+                        title: self.title,
+                        snippet: self.snippet,
+                        status: self.status,
+                        isRead: self.isRead,
+                        listing: self.listing)
+    }
 }

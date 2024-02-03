@@ -61,7 +61,7 @@ struct ThreadView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("AirGPT")
         .task {
-            chatThreadViewModel.loadMessages(chatThread)
+            chatThreadViewModel.loadThread(chatThread)
         }
     }
     

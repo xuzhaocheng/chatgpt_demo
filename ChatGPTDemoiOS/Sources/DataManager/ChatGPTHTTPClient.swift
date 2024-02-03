@@ -43,6 +43,33 @@ class ChatGPTHTTPClient {
         self.openAIAPIKey = apiKey
         self.assistantID = aID
     }
+    
+    func createChatGPTThread() -> Future<ChatGPTThreadCreateResponse, Error> {
+        Future<ChatGPTThreadCreateResponse, Error> { promixe in
+            
+            AF.request(self.baseURL + "/threads", method: .post, parameters: nil, encoding: JSONEncoding.default, headers: self._headers())
+                .validate()
+                .responseDecodable(of: ChatGPTThreadCreateResponse.self) { response in
+                    switch response.result {
+                    case .success(let chatGPTThreadCreateResponse):
+                        print("Thread Create success: \(chatGPTThreadCreateResponse.id)")
+                        promixe(.success(chatGPTThreadCreateResponse))
+                    case .failure(let error):
+                        print("Thread Create failure: \(String(describing: error))")
+                        promixe(.failure(error))
+                        
+                    }
+                }
+        }
+    }
+    
+    func sendTrainingMessage(chatThread: ChatThreadModel, chatgptThreadId: String) -> Future<(ChatGPTMessagesPostResponse, ChatGPTAssistantRunResponse), Error> {
+        let chatGPTTrainingPrompt = "You are an AI Chatbot for AirBnB.  You will answer questions on a listing with this descrption \"\(chatThread.listing!.description)\""
+        
+        return sendMessage(chatThread: chatThread,
+                           chatgptThreadId: chatgptThreadId,
+                           prompt: chatGPTTrainingPrompt)
+    }
 
     func sendMessage(chatThread: ChatThreadModel, chatgptThreadId: String, prompt: String) -> Future<(ChatGPTMessagesPostResponse, ChatGPTAssistantRunResponse), Error> {
         Future { promixe in

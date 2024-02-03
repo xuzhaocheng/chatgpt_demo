@@ -13,6 +13,9 @@ class ChatThreadViewModel: ObservableObject {
     private var dataManager: ChatThreadDataManager
     private var chatThread: ChatThreadModel
     private var lastUserMessgeSentId: String?
+    
+    private var createChatGPTThreadObserver: AnyCancellable?
+    private var trainingMessageObserver: AnyCancellable?
     private var loadMessageObserver: AnyCancellable?
     private var sendMessageObserver: AnyCancellable?
     private var pollRunObserver: AnyCancellable?
@@ -27,8 +30,69 @@ class ChatThreadViewModel: ObservableObject {
     
     @Published var chatThreads: [ChatThreadModel] = []
     
-    func loadMessages(_ chatThread: ChatThreadModel) {
-        loadMessageObserver = dataManager.loadMessages(chatThread)
+    func loadThread(_ chatThread: ChatThreadModel) -> Future<ChatThreadModel, Error> {
+        Future<ChatThreadModel, Error> { promixe in
+            self.chatThread = chatThread
+            
+            guard self.chatThread.chatgptThreadId != nil,
+                  self.chatThread.chatgptThreadId! != "" else {
+                self._createChatGPTThread { result in
+                    switch result {
+                    case .success(_):
+                        // Tell ChatGPT to tell it to be an assistant to current listing
+                        self._sendChatGPTTrainingMessage { trainingMessageResult in
+                            switch trainingMessageResult {
+                            case .success(_):
+                                promixe(.success(self.chatThread))
+                            case .failure(let trainingMessageError):
+                                promixe(.failure(trainingMessageError))
+                            }
+                        }
+                        
+                    case .failure(let error):
+                        promixe(.failure(error))
+                    }
+                }
+                return
+            }
+            
+            self._loadMessages(self.chatThread)
+            promixe(.success(self.chatThread))
+        }
+    }
+    
+    private func _createChatGPTThread(_ completion: @escaping (Result<ChatThreadModel, Error>) -> Void) {
+        createChatGPTThreadObserver = ChatGPTHTTPClient.shared.createChatGPTThread()
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .finished:
+                    print("Create ChatGPTThread Complete")
+                case .failure(let error):
+                    print("Create ChatGPTThread Failed: \(error)")
+                    completion(.failure(error))
+                }
+            }, receiveValue: { chatGPTThreadCreateResponse in
+                self.chatThread = self.chatThread.updateChatGPTThreadId(chatGPTThreadCreateResponse.id)
+                completion(.success(self.chatThread))
+            })
+    }
+    
+    private func _sendChatGPTTrainingMessage(_ completion: @escaping (Result<ChatThreadModel, Error>) -> Void) {
+        trainingMessageObserver = ChatGPTHTTPClient.shared.sendTrainingMessage(chatThread: self.chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!)
+            .sink(receiveCompletion: { results in
+                switch results {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }, receiveValue: { chatGPTMessagesPostResponse, chatGPTAssistantRunResponse in
+                self._loadNextMessages(chatGPTMessagesPostResponse.id)
+            })
+    }
+    
+    private func _loadMessages(_ chatThread: ChatThreadModel) {
+        loadMessageObserver = dataManager.loadThread(chatThread)
             .sink(receiveCompletion: { completion in
                 // Handle completion
             }, receiveValue: { chatMessageModels in
@@ -37,7 +101,10 @@ class ChatThreadViewModel: ObservableObject {
     }
     
     func sendMessage(chatThread: ChatThreadModel, sender: Contact, message: String) {
-        let threadId = "thread_2qHdTgx7WjKuuer7CuzWCBM7"
+        guard let threadId = self.chatThread.chatgptThreadId else {
+            return
+        }
+        
         let newMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: sender, message: message, chatThread: self.chatThread)
         self.messages.append(newMessage)
         
@@ -49,7 +116,6 @@ class ChatThreadViewModel: ObservableObject {
                 case .failure(let error):
                     print("Send Message Failed \(error)")
                 }
-                // Handle completion
             }, receiveValue: { (chatGPTMessagesPostResponse, chatGPTAssistantRunResponse) in
                 print("Successfully sent messsage: \(chatGPTMessagesPostResponse.id)")
                 self.lastUserMessgeSentId = chatGPTMessagesPostResponse.id
@@ -70,33 +136,45 @@ class ChatThreadViewModel: ObservableObject {
                         }
                     }, receiveValue: { chatGPTAssistantRunResponse in
                         print("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
-                        
-                        self.queryNextMessagesObserver = ChatGPTHTTPClient.shared.queryNextMessages(chatgptThreadId: threadId, messageId: chatGPTMessagesPostResponse.id)
-                            .sink(receiveCompletion: { completion in
-                                switch completion {
-                                case .finished:
-                                    print("Getting messages complete")
-                                case .failure(let error):
-                                    print("Getting messages failed: \(error)")
-                                }
-                            }, receiveValue: { chatGPTMessageListResponse in
-                                guard let messages = chatGPTMessageListResponse.data else {
-                                    return
-                                }
-                                
-                                self._removeAllPlaceholderMessages()
-                                for m in messages {
-                                    if m.role == "assistant" {
-                                        if (m.content.count > 0) {
-                                            let chatMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: MockDataHelper.airGPTContact, message: m.content.first!.text.value, chatThread: chatThread)
-                                            self.messages.append(chatMessage)
-                                        }
-                                    }
-                                }
-                            })
+                        self._loadNextMessages(chatGPTMessagesPostResponse.id)
                     })
 
             })
+    }
+    
+    private func _loadNextMessages(_ messageId: String) {
+        self.queryNextMessagesObserver = ChatGPTHTTPClient.shared.queryNextMessages(chatgptThreadId: self.chatThread.chatgptThreadId!, messageId: messageId)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    print("Getting messages complete")
+                case .failure(let error):
+                    print("Getting messages failed: \(error)")
+                }
+            }, receiveValue: { chatGPTMessageListResponse in
+                guard let messages = chatGPTMessageListResponse.data else {
+                    return
+                }
+                
+                self._loadChatGPTMessages(messages)
+            })
+    }
+    
+    private func _loadChatGPTMessages(_ chatGPTMessages: [ChatGPTMessage]?) {
+        guard let messages = chatGPTMessages else {
+            return
+        }
+        
+        self._removeAllPlaceholderMessages()
+        
+        for m in messages {
+            if m.role == "assistant" {
+                if (m.content.count > 0) {
+                    let chatMessage = ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: MockDataHelper.airGPTContact, message: m.content.first!.text.value, chatThread: chatThread)
+                    self.messages.append(chatMessage)
+                }
+            }
+        }
     }
     
     private func _removeAllPlaceholderMessages() {

@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct ChatGPTThreadCreateResponse: Codable {
+    let id: String
+    let created_at: Int?
+}
+
 struct ChatGPTMessagesPostResponse: Codable {
     let id: String
     let thread_id: String

@@ -18,7 +18,7 @@ class ChatThreadDataManager: NSObject, ObservableObject {
         self.chatGPTDataManager = chatGPTDataManager
     }
     
-    func loadMessages(_ chatThread: ChatThreadModel) -> Future<[ChatMessageModel], Error> {
+    func loadThread(_ chatThread: ChatThreadModel) -> Future<[ChatMessageModel], Error> {
         return Future { promixe in
             promixe(.success(MockDataHelper.initialWelcomeMessages(chatThreadModel: chatThread)))
         }
