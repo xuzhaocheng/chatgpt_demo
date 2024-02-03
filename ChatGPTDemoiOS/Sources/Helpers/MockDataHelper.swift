@@ -45,17 +45,6 @@ struct MockDataHelper {
         ]
     }
     
-    static var initialWelcomeMessages: [ChatMessageModel] {
-        let chatThreadModel = mockChatThreadModel;
-
-        let selfSender = MockDataHelper.selfContact
-        let airGPT = MockDataHelper.airGPTContact
-
-        return [
-            ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: airGPT, message: "Hi this is AirGPT assistant, how can I help you?", chatThread: chatThreadModel),
-        ]
-    }
-    
     static var selfContact: Contact {
         Contact(name: "Thuan", isSelf: true, profilePictureUrl: Bundle.main.url(forResource: "thuan", withExtension: "jpeg")!)
     }
@@ -66,6 +55,14 @@ struct MockDataHelper {
     
     static func airGPTMessage(messageType: ChatMessageType = .normal, message: String, chatThread: ChatThreadModel) -> ChatMessageModel {
         ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: MockDataHelper.airGPTContact, message: message, chatThread: chatThread)
+    }
+    
+    static func initialWelcomeMessages(chatThreadModel: ChatThreadModel) -> [ChatMessageModel] {
+        let chatThreadModel = mockChatThreadModel;
+
+        return [
+            ChatMessageModel(sentTimestamp: Date().timeIntervalSince1970, sender: MockDataHelper.airGPTContact, message: "Hi this is AirGPT assistant, how can I help you?", chatThread: chatThreadModel),
+        ]
     }
     
     static func airGPTPlaceholderMessage(chatThread: ChatThreadModel) -> ChatMessageModel {

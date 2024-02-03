@@ -20,7 +20,7 @@ class ChatThreadDataManager: NSObject, ObservableObject {
     
     func loadMessages(_ chatThread: ChatThreadModel) -> Future<[ChatMessageModel], Error> {
         return Future { promixe in
-            promixe(.success(MockDataHelper.initialWelcomeMessages))
+            promixe(.success(MockDataHelper.initialWelcomeMessages(chatThreadModel: chatThread)))
         }
     }
 }

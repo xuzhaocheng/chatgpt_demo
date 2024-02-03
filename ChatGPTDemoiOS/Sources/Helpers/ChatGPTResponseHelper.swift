@@ -59,8 +59,3 @@ struct ChatGPTMessageContent: Codable {
 struct ChatGPTMessageContentText: Codable {
     let value: String
 }
-
-
-struct ChatGPTResponseHelper {
-    static let shared = ChatGPTResponseHelper()
-}

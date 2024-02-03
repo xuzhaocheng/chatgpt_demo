@@ -16,6 +16,10 @@ bazel run //:ChatGPTDemoApp
 
 bazel run //:xcodeproj
 
+## Update Info.plist
+
+Open up Info.plist and replace the values for "OpenAIAPIKey" and "OpenAIAssistantId" before you build and run the app
+
 ## Resources
 
 https://github.com/bazelbuild/rules_apple/blob/master/doc/tutorials/ios-app.md
