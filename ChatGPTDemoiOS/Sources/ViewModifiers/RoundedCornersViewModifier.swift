@@ -10,6 +10,7 @@ import SwiftUI
 struct RoundedCornersViewModifier: ViewModifier {
     var roundedCorners: CGFloat
     var textColor: Color
+    var shadowRadius: CGFloat = 8.0
     
     func body(content: Content) -> some View {
         content
@@ -18,6 +19,6 @@ struct RoundedCornersViewModifier: ViewModifier {
             .cornerRadius(roundedCorners)
             .padding(3.0)
             .foregroundColor(textColor)
-            .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.20), radius: 8.0)
+            .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.20), radius: shadowRadius)
     }
 }

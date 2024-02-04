@@ -47,6 +47,8 @@ struct ChatGPTAssistantRunResponse: Codable {
 
 struct ChatGPTMessageListResponse: Codable {
     let data: [ChatGPTMessage]?
+    let first_id: String
+    let last_id: String
 }
 
 struct ChatGPTMessage: Codable {

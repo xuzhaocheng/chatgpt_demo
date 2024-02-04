@@ -45,4 +45,8 @@ class ChatThreadDataManager: NSObject, ObservableObject {
         
         return cache[listingId] as? String
     }
+    
+    func clearChatGPTThreads() {
+        UserDefaults.standard.removeObject(forKey: cachedChatGPTUserDefaultsKey)
+    }
 }

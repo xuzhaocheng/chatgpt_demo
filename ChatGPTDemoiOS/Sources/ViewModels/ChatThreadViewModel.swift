@@ -137,16 +137,12 @@ class ChatThreadViewModel: ObservableObject {
                     print("Getting messages failed: \(error)")
                 }
             }, receiveValue: { chatGPTMessageListResponse in
-                guard let messages = chatGPTMessageListResponse.data else {
-                    return
-                }
-                
-                self._loadChatGPTMessages(messages, includeRoles: includeRoles)
+                self._loadChatGPTMessages(chatGPTMessageListResponse, includeRoles: includeRoles)
             })
     }
     
-    private func _loadChatGPTMessages(_ chatGPTMessages: [ChatGPTMessage]?, includeRoles: [String]) {
-        guard let messages = chatGPTMessages else {
+    private func _loadChatGPTMessages(_ chatGPTMessageListResponse: ChatGPTMessageListResponse, includeRoles: [String]) {
+        guard let messages = chatGPTMessageListResponse.data else {
             return
         }
         
@@ -158,7 +154,7 @@ class ChatThreadViewModel: ObservableObject {
                 continue
             }
             
-            if index == 0 && m.role == "user" {
+            if index == 0 && m.role == "user" && m.id == chatGPTMessageListResponse.first_id {
                 continue // HACK for demo purposes to not show the first user message, since this first message is the training prompt
             }
             
