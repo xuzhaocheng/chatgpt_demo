@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import OSLog
 
 class ChatThreadViewModel: ObservableObject {
     
@@ -60,9 +61,9 @@ class ChatThreadViewModel: ObservableObject {
             .sink(receiveCompletion: { result in
                 switch result {
                 case .finished:
-                    print("Create ChatGPTThread Complete")
+                    Logger.system.info("Create ChatGPTThread Complete")
                 case .failure(let error):
-                    print("Create ChatGPTThread Failed: \(error)")
+                    Logger.system.error("Create ChatGPTThread Failed: \(error)")
                     completion(.failure(error))
                 }
             }, receiveValue: { chatGPTThreadCreateResponse in
@@ -97,12 +98,12 @@ class ChatThreadViewModel: ObservableObject {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                    print("Send Message Complete")
+                    Logger.system.info("Send Message Complete")
                 case .failure(let error):
-                    print("Send Message Failed \(error)")
+                    Logger.system.error("Send Message Failed \(error)")
                 }
             }, receiveValue: { (chatGPTMessagesPostResponse, chatGPTAssistantRunResponse) in
-                print("Successfully sent messsage: \(chatGPTMessagesPostResponse.id)")
+                Logger.system.info("Successfully sent messsage: \(chatGPTMessagesPostResponse.id)")
                 self.lastUserMessgeSentId = chatGPTMessagesPostResponse.id
                 
                 if chatGPTAssistantRunResponse.status != "completed" {
@@ -110,17 +111,17 @@ class ChatThreadViewModel: ObservableObject {
                 }
                 
                 // Start Polling run
-                print("Polling run \(chatGPTAssistantRunResponse.id)")
+                Logger.system.info("Polling run \(chatGPTAssistantRunResponse.id)")
                 self.pollRunObserver = ChatGPTHTTPClient.shared.pollRun(chatgptThreadId: chatGPTAssistantRunResponse.thread_id, runId: chatGPTAssistantRunResponse.id)
                     .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished:
-                            print("Polling run finished")
+                            Logger.system.info("Polling run finished")
                         case .failure(let error):
-                            print("Polling run failed \(error)")
+                            Logger.system.error("Polling run failed \(error)")
                         }
                     }, receiveValue: { chatGPTAssistantRunResponse in
-                        print("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
+                        Logger.system.info("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
                         self._loadNextMessages(messageId: chatGPTMessagesPostResponse.id)
                     })
 
@@ -132,9 +133,9 @@ class ChatThreadViewModel: ObservableObject {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                    print("Getting messages complete")
+                    Logger.system.info("Getting messages complete")
                 case .failure(let error):
-                    print("Getting messages failed: \(error)")
+                    Logger.system.error("Getting messages failed: \(error)")
                 }
             }, receiveValue: { chatGPTMessageListResponse in
                 self._loadChatGPTMessages(chatGPTMessageListResponse, includeRoles: includeRoles)

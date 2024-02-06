@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import Combine
+import OSLog
 
 class ChatGPTHTTPClient {
     static let shared = ChatGPTHTTPClient()
@@ -17,7 +18,7 @@ class ChatGPTHTTPClient {
     private let maxPollRetry: Int = 5
     private let openAIAPIKey: String
     private let assistantID: String
-    
+        
     init() {
         var apiKey: String = ""
         var aID: String = ""
@@ -52,10 +53,10 @@ class ChatGPTHTTPClient {
                 .responseDecodable(of: ChatGPTThreadCreateResponse.self) { response in
                     switch response.result {
                     case .success(let chatGPTThreadCreateResponse):
-                        print("Thread Create success: \(chatGPTThreadCreateResponse.id)")
+                        Logger.system.info("Thread Create success: \(chatGPTThreadCreateResponse.id)")
                         promixe(.success(chatGPTThreadCreateResponse))
                     case .failure(let error):
-                        print("Thread Create failure: \(String(describing: error))")
+                        Logger.system.error("Thread Create failure: \(String(describing: error))")
                         promixe(.failure(error))
                         
                     }
@@ -79,7 +80,8 @@ class ChatGPTHTTPClient {
                 .responseDecodable(of: ChatGPTMessagesPostResponse.self) { response in
                     switch response.result {
                         case .success(let chatGPTMessagePostResponse):
-                            print("Messsage send success: \(chatGPTMessagePostResponse.id)")
+                            Logger.system.info("Messsage send success: \(chatGPTMessagePostResponse.id)")
+                            
                             self._triggerAssistantRun(chatgptThreadId: chatgptThreadId) { assistantRunResult in
                                 switch assistantRunResult {
                                 case .success(let chatGPTAssistantRunResponse):
@@ -89,7 +91,7 @@ class ChatGPTHTTPClient {
                                 }
                             }
                         case .failure(let error):
-                            print("Error while adding message: \(String(describing: error))")
+                            Logger.system.error("Error while adding message: \(String(describing: error))")
                             promixe(.failure(error))
                         }
                     }
@@ -106,10 +108,10 @@ class ChatGPTHTTPClient {
             .responseDecodable(of: ChatGPTAssistantRunResponse.self) { response in
                 switch response.result {
                 case .success(let chatGPTAssistantRunResponse):
-                    print("Run Assistant success: \(chatGPTAssistantRunResponse.id)")
+                    Logger.system.info("Run Assistant success: \(chatGPTAssistantRunResponse.id)")
                     completion(.success(chatGPTAssistantRunResponse))
                 case .failure(let error):
-                    print("Error while running assistant: \(String(describing: error))")
+                    Logger.system.error("Error while running assistant: \(String(describing: error))")
                     completion(.failure(error))
                 }
             }
@@ -165,7 +167,6 @@ class ChatGPTHTTPClient {
             if let mId = messageId {
                 url += "&after=\(mId)"
             }
-            print("URL: \(url)")
             
             AF.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: self._headers())
                 .validate()

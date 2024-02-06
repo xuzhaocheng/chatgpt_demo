@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 class ListingDataManager: NSObject {
     static let shared = ListingDataManager()
@@ -20,7 +21,7 @@ class ListingDataManager: NSObject {
             let listingsArray = try! PropertyListSerialization.propertyList(from: listingsData, options: [], format: nil)
             parseListings(listingsArray as! NSArray)
         } else {
-            print("Error loading listings resource")
+            Logger.system.error("Error loading listings resource")
         }
     }
     
@@ -36,7 +37,7 @@ class ListingDataManager: NSObject {
                     if let imageURL = URL(string: imageString) {
                         images.append(imageURL)
                     } else {
-                        print("Invalid image url: \(imageString)")
+                        Logger.system.error("Invalid image url: \(imageString)")
                     }
                 }
             }
