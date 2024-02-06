@@ -14,7 +14,7 @@ struct RoundedCornersViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .padding()
+            .padding(12.0)
             .background(Color.white)
             .cornerRadius(roundedCorners)
             .padding(3.0)

@@ -25,7 +25,7 @@ struct ListingListView: View {
                             .resizable()
                             .frame(width: 30.0, height: 30.0)
                         Spacer()
-                            .frame(width: 20)
+                            .frame(width: 8.0)
                         VStack(alignment: .leading) {
                             Text("Where to?")
                                 .font(.system(.headline, design: .rounded))

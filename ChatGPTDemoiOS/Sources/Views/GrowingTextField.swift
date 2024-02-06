@@ -65,10 +65,9 @@ struct GrowingTextField: View {
                                 }
                             }
                         }
-                        .padding(.bottom)
                     }
-                    .frame(maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
                     .padding(.trailing)
+                    .padding(.bottom, 12.0)
                 }
             }
         }
