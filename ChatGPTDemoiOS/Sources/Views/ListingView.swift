@@ -20,10 +20,11 @@ struct ListingView: View {
                             .scaledToFill()
                             .aspectRatio(contentMode: .fill)
                             .clipped()
+                            .cornerRadius(16.0)
                     } placeholder: {
                         ProgressView()
+                        .frame(maxWidth: .infinity)
                     }
-                    .cornerRadius(16.0)
                     
                     Image(systemName: "suit.heart")
                         .padding(8.0)

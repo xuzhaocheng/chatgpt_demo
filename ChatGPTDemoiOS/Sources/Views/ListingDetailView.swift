@@ -27,14 +27,17 @@ struct ListingDetailView: View {
                             .clipped()
                     } placeholder: {
                         ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 200)
                     }
+                    
                     Button {
                         dismiss()
                     } label: {
                         Image(systemName: "chevron.backward.circle.fill")
                             .resizable()
                             .frame(width: 40, height: 40)
-                            .foregroundColor(Color.white)
+                            .foregroundColor(Color(.systemGray6))
                             .padding(EdgeInsets(top: 60.0, leading: 16.0, bottom: 0.0, trailing: 16.0))
                     }
                 }
