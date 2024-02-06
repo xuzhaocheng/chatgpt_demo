@@ -19,7 +19,8 @@ struct MockDataHelper {
             availability: "5 nights * Feb 4- 9",
             rating: "4.97",
             url: URL(string: "https://www.airbnb.com/rooms/49986215")!,
-            images: [URL(string: "https://a0.muscache.com/im/pictures/38691cf9-b5c6-4052-bc79-60ea4a6ace72.jpg?im_w=1200")!])
+            images: [URL(string: "https://a0.muscache.com/im/pictures/38691cf9-b5c6-4052-bc79-60ea4a6ace72.jpg?im_w=1200")!],
+            assistantId: nil)
     }
     
     static var mockChatThreadModel: ChatThreadModel {

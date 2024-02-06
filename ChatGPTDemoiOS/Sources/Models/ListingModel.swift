@@ -18,4 +18,5 @@ struct ListingModel: Identifiable, Hashable {
     let rating: String
     let url: URL
     let images: [URL]?
+    let assistantId: String?
 }

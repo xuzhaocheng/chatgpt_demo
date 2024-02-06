@@ -53,7 +53,8 @@ class ListingDataManager: NSObject {
                     availability: listingDictionary["availability"] as! String,
                     rating: listingDictionary["rating"] as! String,
                     url: URL(string: listingURLString as! String)!,
-                    images: images)
+                    images: images,
+                    assistantId: listingDictionary["assistant_id"] as? String)
             )
         }
     }

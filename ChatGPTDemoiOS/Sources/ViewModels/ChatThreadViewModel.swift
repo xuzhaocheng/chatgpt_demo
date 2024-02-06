@@ -40,12 +40,33 @@ class ChatThreadViewModel: ObservableObject {
                 self._createChatGPTThread { result in
                     switch result {
                     case .success(_):
-                        // Tell ChatGPT to tell it to be an assistant to current listing
-                        let trainingMessage = ChatGPTHTTPClient.shared.trainingMessage(chatThread: self.chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!)
-                        self.sendMessage(shouldAddToMessageList: false, chatThread: chatThread, sender: MockDataHelper.selfContact, message: trainingMessage)
-                        promixe(.success(self.chatThread))
+                        if self.chatThread.listing?.assistantId == nil {
+                            // Tell ChatGPT to tell it to be an assistant to current listing
+                            let trainingMessage = ChatGPTHTTPClient.shared.trainingMessage(chatThread: self.chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!)
+                            Logger.system.info("Sending training message: \(trainingMessage)")
+
+                            self.sendMessage(shouldAddToMessageList: false, chatThread: chatThread, sender: MockDataHelper.selfContact, message: trainingMessage)
+                            promixe(.success(self.chatThread))
+                        } else {
+                            // This is the case where we have a specific assistant for this AirBnb listing, we don't need to send
+                            // any training messages since this assistant already has all the listing data
+                            ChatGPTHTTPClient.shared.triggerAssistantRun(chatThread: chatThread, chatgptThreadId: self.chatThread.chatgptThreadId!) { assistantRunResult in
+                                switch assistantRunResult {
+                                case .success(let chatGPTAssistantRunResponse):
+                                    promixe(.success(self.chatThread))
+                                    
+                                    // Start Polling run
+                                    self.messages.append(MockDataHelper.airGPTPlaceholderMessage(chatThread: chatThread))
+                                    self._pollRunObserver(chatGPTMessagesPostResponse: nil, chatGPTAssistantRunResponse: chatGPTAssistantRunResponse)
+                                case .failure(let error):
+                                    promixe(.failure(error))
+                                    self._addFailureMessage()
+                                }
+                            }
+                        }
                     case .failure(let error):
                         promixe(.failure(error))
+                        self._addFailureMessage()
                     }
                 }
                 return
@@ -65,6 +86,7 @@ class ChatThreadViewModel: ObservableObject {
                 case .failure(let error):
                     Logger.system.error("Create ChatGPTThread Failed: \(error)")
                     completion(.failure(error))
+                    self._addFailureMessage()
                 }
             }, receiveValue: { chatGPTThreadCreateResponse in
                 self.chatThread = self.chatThread.updateChatGPTThreadId(chatGPTThreadCreateResponse.id)
@@ -75,12 +97,6 @@ class ChatThreadViewModel: ObservableObject {
     
     private func _loadMessages(_ chatThread: ChatThreadModel) {
         _loadNextMessages(messageId: nil, includeRoles: ["assistant", "user"])
-//        loadMessageObserver = dataManager.loadThread(chatThread)
-//            .sink(receiveCompletion: { completion in
-//                // Handle completion
-//            }, receiveValue: { chatMessageModels in
-//                self.messages = chatMessageModels
-//        })
     }
     
     func sendMessage(shouldAddToMessageList: Bool = true, chatThread: ChatThreadModel, sender: Contact, message: String) {
@@ -101,6 +117,7 @@ class ChatThreadViewModel: ObservableObject {
                     Logger.system.info("Send Message Complete")
                 case .failure(let error):
                     Logger.system.error("Send Message Failed \(error)")
+                    self._addFailureMessage()
                 }
             }, receiveValue: { (chatGPTMessagesPostResponse, chatGPTAssistantRunResponse) in
                 Logger.system.info("Successfully sent messsage: \(chatGPTMessagesPostResponse.id)")
@@ -111,20 +128,44 @@ class ChatThreadViewModel: ObservableObject {
                 }
                 
                 // Start Polling run
-                Logger.system.info("Polling run \(chatGPTAssistantRunResponse.id)")
-                self.pollRunObserver = ChatGPTHTTPClient.shared.pollRun(chatgptThreadId: chatGPTAssistantRunResponse.thread_id, runId: chatGPTAssistantRunResponse.id)
-                    .sink(receiveCompletion: { completion in
-                        switch completion {
-                        case .finished:
-                            Logger.system.info("Polling run finished")
-                        case .failure(let error):
-                            Logger.system.error("Polling run failed \(error)")
-                        }
-                    }, receiveValue: { chatGPTAssistantRunResponse in
-                        Logger.system.info("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
-                        self._loadNextMessages(messageId: chatGPTMessagesPostResponse.id)
-                    })
+                self._pollRunObserver(chatGPTMessagesPostResponse: chatGPTMessagesPostResponse, chatGPTAssistantRunResponse: chatGPTAssistantRunResponse)
+//                self.pollRunObserver = ChatGPTHTTPClient.shared.pollRun(chatgptThreadId: chatGPTAssistantRunResponse.thread_id, runId: chatGPTAssistantRunResponse.id)
+//                    .sink(receiveCompletion: { completion in
+//                        switch completion {
+//                        case .finished:
+//                            Logger.system.info("Polling run finished")
+//                        case .failure(let error):
+//                            Logger.system.error("Polling run failed \(error)")
+//                            self._addFailureMessage()
+//                        }
+//                    }, receiveValue: { chatGPTAssistantRunResponse in
+//                        Logger.system.info("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
+//                        self._loadNextMessages(messageId: chatGPTMessagesPostResponse.id)
+//                    })
 
+            })
+    }
+    
+    private func _pollRunObserver(chatGPTMessagesPostResponse: ChatGPTMessagesPostResponse?, chatGPTAssistantRunResponse: ChatGPTAssistantRunResponse) {
+        Logger.system.info("Polling run \(chatGPTAssistantRunResponse.id)")
+        self.pollRunObserver = ChatGPTHTTPClient.shared.pollRun(chatgptThreadId: chatGPTAssistantRunResponse.thread_id, runId: chatGPTAssistantRunResponse.id)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    Logger.system.info("Polling run finished")
+                case .failure(let error):
+                    Logger.system.error("Polling run failed \(error)")
+                    self._addFailureMessage()
+                }
+            }, receiveValue: { chatGPTAssistantRunResponse in
+                Logger.system.info("Polling run completed with status: \(chatGPTAssistantRunResponse.status)")
+                if let messageResponse = chatGPTMessagesPostResponse {
+                    // load all after response
+                    self._loadNextMessages(messageId: messageResponse.id)
+                } else {
+                    // load all messages
+                    self._loadNextMessages(messageId: nil, includeRoles: ["assistant", "user"])
+                }
             })
     }
     
@@ -136,6 +177,8 @@ class ChatThreadViewModel: ObservableObject {
                     Logger.system.info("Getting messages complete")
                 case .failure(let error):
                     Logger.system.error("Getting messages failed: \(error)")
+                    self._addFailureMessage()
+                    
                 }
             }, receiveValue: { chatGPTMessageListResponse in
                 self._loadChatGPTMessages(chatGPTMessageListResponse, includeRoles: includeRoles)
@@ -170,5 +213,10 @@ class ChatThreadViewModel: ObservableObject {
         messages.removeAll { message in
             message.type == .placeholder
         }
+    }
+    
+    private func _addFailureMessage() {
+        _removeAllPlaceholderMessages()
+        messages.append(MockDataHelper.airGPTMessage(message: "Something went wrong, please try again.", chatThread: self.chatThread))
     }
 }

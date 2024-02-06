@@ -82,7 +82,7 @@ class ChatGPTHTTPClient {
                         case .success(let chatGPTMessagePostResponse):
                             Logger.system.info("Messsage send success: \(chatGPTMessagePostResponse.id)")
                             
-                            self._triggerAssistantRun(chatgptThreadId: chatgptThreadId) { assistantRunResult in
+                            self.triggerAssistantRun(chatThread: chatThread, chatgptThreadId: chatgptThreadId) { assistantRunResult in
                                 switch assistantRunResult {
                                 case .success(let chatGPTAssistantRunResponse):
                                     promixe(.success((chatGPTMessagePostResponse, chatGPTAssistantRunResponse)))
@@ -98,10 +98,12 @@ class ChatGPTHTTPClient {
             }
     }
     
-    private func _triggerAssistantRun(chatgptThreadId: String, completion: @escaping (Result<ChatGPTAssistantRunResponse, Error>) -> Void) {
+    func triggerAssistantRun(chatThread: ChatThreadModel, chatgptThreadId: String, completion: @escaping (Result<ChatGPTAssistantRunResponse, Error>) -> Void) {
         let params: [String: Any] = [
-            "assistant_id": "\(assistantID)",
+            "assistant_id": _assistantId(chatThread: chatThread) as Any,
         ]
+        
+        Logger.system.info("RUN PARAMS: \(params)")
         
         AF.request(baseURL + "/threads/\(chatgptThreadId)/runs", method: .post, parameters: params, encoding: JSONEncoding.default, headers: _headers())
             .validate()
@@ -187,5 +189,9 @@ class ChatGPTHTTPClient {
            "Authorization": "Bearer \(self.openAIAPIKey)",
            "OpenAI-Beta": "assistants=v1"
        ]
+    }
+    
+    private func _assistantId(chatThread: ChatThreadModel) -> String {
+        (chatThread.listing!.assistantId != nil) ? chatThread.listing!.assistantId! : self.assistantID
     }
 }
