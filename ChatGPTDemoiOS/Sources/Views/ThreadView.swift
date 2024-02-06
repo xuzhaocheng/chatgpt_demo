@@ -13,6 +13,7 @@ struct ThreadView: View {
     var chatThread: ChatThreadModel
     
     @State var textFieldText: String = ""
+    @State var isTextFieldFocused: Bool = false
     
     init(chatThread: ChatThreadModel) {
         self.chatThread = chatThread
@@ -22,9 +23,11 @@ struct ThreadView: View {
     var body: some View {
         VStack {
             Divider()
-            ThreadViewBanner(listing: chatThread.listing!)
-                .padding(.vertical)
-            Divider()
+            if !isTextFieldFocused {
+                ThreadViewBanner(listing: chatThread.listing!)
+                    .padding(.vertical)
+                Divider()
+            }
             ScrollViewReader { proxy in
                 ScrollView {
                     ForEach(chatThreadViewModel.messages, id: \.id) { message in
@@ -45,6 +48,7 @@ struct ThreadView: View {
                         chatThreadViewModel.sendMessage(chatThread: chatThread, sender: MockDataHelper.selfContact, message: message)
                     },
                     onFocusChanged: { isFocused in
+                        self.isTextFieldFocused = isFocused
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             if isFocused,
                                let lastMessage = _lastMessage() {

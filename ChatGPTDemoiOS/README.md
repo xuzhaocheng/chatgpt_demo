@@ -7,9 +7,17 @@ bazel run //:swift_update_pkgs
 ```
 ## Build and run from command line
 
+Simulator:
+
 ```
 bazel build //:ChatGPTDemoApp
 bazel run //:ChatGPTDemoApp
+```
+
+Device:
+
+```
+bazel build //:ChatGPTDemoApp --apple_platform_type=ios --ios_multi_cpus=arm64
 ```
 
 ## Build xcode project
