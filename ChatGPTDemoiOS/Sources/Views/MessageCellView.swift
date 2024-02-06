@@ -39,11 +39,4 @@ struct MessageCellView: View {
         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
         .padding()
     }
-    
-//    private func _imageFromMainBundle(name: String, type: String = "jpeg") -> UIImage? {
-//        guard let path = Bundle.main.path(forResource: name, ofType: type)
-//              else { return nil }
-//        
-//        return UIImage(contentsOfFile: path)
-//    }
 }

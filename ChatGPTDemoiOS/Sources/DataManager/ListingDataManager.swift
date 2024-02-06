@@ -21,7 +21,7 @@ class ListingDataManager: NSObject {
             let listingsArray = try! PropertyListSerialization.propertyList(from: listingsData, options: [], format: nil)
             parseListings(listingsArray as! NSArray)
         } else {
-            Logger.system.error("Error loading listings resource")
+            Logger.system.errorAndCache("Error loading listings resource")
         }
     }
     
@@ -37,7 +37,7 @@ class ListingDataManager: NSObject {
                     if let imageURL = URL(string: imageString) {
                         images.append(imageURL)
                     } else {
-                        Logger.system.error("Invalid image url: \(imageString)")
+                        Logger.system.errorAndCache("Invalid image url: \(imageString)")
                     }
                 }
             }

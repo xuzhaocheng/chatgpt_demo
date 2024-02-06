@@ -53,10 +53,10 @@ class ChatGPTHTTPClient {
                 .responseDecodable(of: ChatGPTThreadCreateResponse.self) { response in
                     switch response.result {
                     case .success(let chatGPTThreadCreateResponse):
-                        Logger.system.info("Thread Create success: \(chatGPTThreadCreateResponse.id)")
+                        Logger.system.infoAndCache("Thread Create success: \(chatGPTThreadCreateResponse.id)")
                         promixe(.success(chatGPTThreadCreateResponse))
                     case .failure(let error):
-                        Logger.system.error("Thread Create failure: \(String(describing: error))")
+                        Logger.system.errorAndCache("Thread Create failure: \(String(describing: error))")
                         promixe(.failure(error))
                         
                     }
@@ -80,7 +80,7 @@ class ChatGPTHTTPClient {
                 .responseDecodable(of: ChatGPTMessagesPostResponse.self) { response in
                     switch response.result {
                         case .success(let chatGPTMessagePostResponse):
-                            Logger.system.info("Messsage send success: \(chatGPTMessagePostResponse.id)")
+                            Logger.system.infoAndCache("Messsage send success: \(chatGPTMessagePostResponse.id)")
                             
                             self.triggerAssistantRun(chatThread: chatThread, chatgptThreadId: chatgptThreadId) { assistantRunResult in
                                 switch assistantRunResult {
@@ -91,7 +91,7 @@ class ChatGPTHTTPClient {
                                 }
                             }
                         case .failure(let error):
-                            Logger.system.error("Error while adding message: \(String(describing: error))")
+                            Logger.system.errorAndCache("Error while adding message: \(String(describing: error))")
                             promixe(.failure(error))
                         }
                     }
@@ -103,17 +103,17 @@ class ChatGPTHTTPClient {
             "assistant_id": _assistantId(chatThread: chatThread) as Any,
         ]
         
-        Logger.system.info("RUN PARAMS: \(params)")
+        Logger.system.infoAndCache("RUN PARAMS: \(params)")
         
         AF.request(baseURL + "/threads/\(chatgptThreadId)/runs", method: .post, parameters: params, encoding: JSONEncoding.default, headers: _headers())
             .validate()
             .responseDecodable(of: ChatGPTAssistantRunResponse.self) { response in
                 switch response.result {
                 case .success(let chatGPTAssistantRunResponse):
-                    Logger.system.info("Run Assistant success: \(chatGPTAssistantRunResponse.id)")
+                    Logger.system.infoAndCache("Run Assistant success: \(chatGPTAssistantRunResponse.id)")
                     completion(.success(chatGPTAssistantRunResponse))
                 case .failure(let error):
-                    Logger.system.error("Error while running assistant: \(String(describing: error))")
+                    Logger.system.errorAndCache("Error while running assistant: \(String(describing: error))")
                     completion(.failure(error))
                 }
             }

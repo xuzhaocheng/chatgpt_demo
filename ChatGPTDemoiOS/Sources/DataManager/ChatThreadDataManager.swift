@@ -13,7 +13,6 @@ class ChatThreadDataManager: NSObject, ObservableObject {
     private let cachedChatGPTUserDefaultsKey = "cachedChatGPTUserDefaultsKey"
     
     var chatGPTDataManager: ChatGPTHTTPClient
-//    @Published private(set) var messages: [ChatMessageModel] = []
     
     init(chatGPTDataManager: ChatGPTHTTPClient) {
         self.chatGPTDataManager = chatGPTDataManager
