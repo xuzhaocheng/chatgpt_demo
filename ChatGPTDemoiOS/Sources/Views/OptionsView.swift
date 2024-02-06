@@ -44,8 +44,10 @@ struct OptionsView: View {
                 Section(header: Text("Logs")) {
                     ForEach(Logger.logsToDisplay.reversed(), id: \.self) { log in
                         Text(log.formattedLogString())
+                            .font(.caption2)
                             .foregroundStyle(log.logLevel == .error ? .red : .black)
                             .fontWeight(log.logLevel == .error ? .bold : .regular)
+                            .listRowInsets(EdgeInsets(top: 0.0, leading: 4.0, bottom: 0.0, trailing: 4.0))
                     }
                 }
             }
