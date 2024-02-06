@@ -12,3 +12,8 @@ filegroup(
     name = "Images",
     srcs = glob(["images/*.jpeg"]),
 )
+
+filegroup(
+    name = "AppIcons",
+    srcs = glob(["Assets.xcassets/AppIcon.appiconset/*.png"]),
+)

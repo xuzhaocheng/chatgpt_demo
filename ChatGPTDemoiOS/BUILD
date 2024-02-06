@@ -80,6 +80,9 @@ ios_application(
     ],
     infoplists = ["Info.plist"],
     launch_storyboard = "//Resources:Launch.storyboard",
+    app_icons = [
+        "//Resources:AppIcons",
+    ],
     minimum_os_version = "16.0",
     visibility = ["//visibility:public"],
     provisioning_profile = "ChatGPT_Dev_Certificate.mobileprovision",
