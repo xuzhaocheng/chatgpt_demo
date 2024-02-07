@@ -64,6 +64,7 @@ swift_library(
     srcs = glob(["Sources/**/*.swift"]),
     deps = [
         "@swiftpkg_alamofire//:Source_Alamofire",
+        "@swiftpkg_swiftui_cached_async_image//:Sources_CachedAsyncImage",
     ],
     data = [
         "//Resources:Images",

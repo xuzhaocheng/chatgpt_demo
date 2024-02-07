@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct ListingView: View {
     let listing: ListingModel
@@ -14,7 +15,7 @@ struct ListingView: View {
         VStack(alignment: .leading, spacing: 4.0) {
             if let previewImage = listing.images?.first {
                 ZStack(alignment:Alignment(horizontal: .trailing, vertical: .top)) {
-                    AsyncImage(url: previewImage) { image in
+                    CachedAsyncImage(url: previewImage) { image in
                         image
                             .resizable()
                             .scaledToFill()

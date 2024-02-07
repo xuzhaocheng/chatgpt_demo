@@ -1,6 +1,7 @@
 {
   "direct_dep_identities": [
-    "alamofire"
+    "alamofire",
+    "swiftui-cached-async-image"
   ],
   "modules": [
     {
@@ -12,6 +13,16 @@
       "product_memberships": [
         "Alamofire"
       ]
+    },
+    {
+      "name": "CachedAsyncImage",
+      "c99name": "CachedAsyncImage",
+      "src_type": "swift",
+      "label": "@swiftpkg_swiftui_cached_async_image//:Sources_CachedAsyncImage",
+      "package_identity": "swiftui-cached-async-image",
+      "product_memberships": [
+        "CachedAsyncImage"
+      ]
     }
   ],
   "products": [
@@ -21,6 +32,14 @@
       "type": "library",
       "target_labels": [
         "@swiftpkg_alamofire//:Source_Alamofire"
+      ]
+    },
+    {
+      "identity": "swiftui-cached-async-image",
+      "name": "CachedAsyncImage",
+      "type": "library",
+      "target_labels": [
+        "@swiftpkg_swiftui_cached_async_image//:Sources_CachedAsyncImage"
       ]
     }
   ],
@@ -32,6 +51,15 @@
         "commit": "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
         "remote": "https://github.com/Alamofire/Alamofire.git",
         "version": "5.8.1"
+      }
+    },
+    {
+      "name": "swiftpkg_swiftui_cached_async_image",
+      "identity": "swiftui-cached-async-image",
+      "remote": {
+        "commit": "467a3d17479887943ab917a379e62bbaff60ac8a",
+        "remote": "https://github.com/lorenzofiamingo/swiftui-cached-async-image.git",
+        "version": "2.1.1"
       }
     }
   ]

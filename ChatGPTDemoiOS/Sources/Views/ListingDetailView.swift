@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct ListingDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -19,7 +20,7 @@ struct ListingDetailView: View {
         VStack(alignment: .leading) {
             ScrollView {
                 ZStack(alignment:Alignment(horizontal: .leading, vertical: .top)) {
-                    AsyncImage(url: listing.images?.first) { image in
+                    CachedAsyncImage(url: listing.images?.first) { image in
                         image
                             .resizable()
                             .scaledToFill()
@@ -28,7 +29,7 @@ struct ListingDetailView: View {
                     } placeholder: {
                         ProgressView()
                         .frame(maxWidth: .infinity)
-                        .frame(height: 200)
+                        .frame(height: 300)
                     }
                     
                     Button {

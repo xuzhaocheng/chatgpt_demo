@@ -6,13 +6,14 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct ThreadViewBanner: View {
     let listing: ListingModel
     
     var body: some View {
         HStack {
-            AsyncImage(url: listing.images?.first) { image in
+            CachedAsyncImage(url: listing.images?.first) { image in
                 image
                     .resizable()
                     .scaledToFill()

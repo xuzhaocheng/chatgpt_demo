@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "9957858088eef2f9dc972997304613291e5a64bd62bfcc893d7d9e5d658b2a3f",
+  "moduleFileHash": "be9e50200bc3b0b5a89cc541d55112b93aa71c756a1d22e6cc0ce2d300476f21",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -34,7 +34,8 @@
             "column": 27
           },
           "imports": {
-            "swiftpkg_alamofire": "swiftpkg_alamofire"
+            "swiftpkg_alamofire": "swiftpkg_alamofire",
+            "swiftpkg_swiftui_cached_async_image": "swiftpkg_swiftui_cached_async_image"
           },
           "devImports": [],
           "tags": [
@@ -3616,7 +3617,7 @@
       "general": {
         "bzlTransitiveDigest": "RAXmIOdYeEgAIU2uKKJFxO3Uqo7xvnGxHmOD276y14c=",
         "accumulatedFileDigests": {
-          "@@//:swift_deps_index.json": "2b580042347341db81de92efaa1c8796cefda6a7ae4e26125a763d964ec87525"
+          "@@//:swift_deps_index.json": "a2728927988764a308807e6b18a942ed197012be94949436198aef49700a1008"
         },
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -3628,6 +3629,26 @@
               "bazel_package_name": "swiftpkg_alamofire",
               "commit": "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
               "remote": "https://github.com/Alamofire/Alamofire.git",
+              "dependencies_index": "@@//:swift_deps_index.json",
+              "init_submodules": false,
+              "recursive_init_submodules": false,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          },
+          "swiftpkg_swiftui_cached_async_image": {
+            "bzlFile": "@@rules_swift_package_manager~0.26.2//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "name": "rules_swift_package_manager~0.26.2~swift_deps~swiftpkg_swiftui_cached_async_image",
+              "bazel_package_name": "swiftpkg_swiftui_cached_async_image",
+              "commit": "467a3d17479887943ab917a379e62bbaff60ac8a",
+              "remote": "https://github.com/lorenzofiamingo/swiftui-cached-async-image.git",
               "dependencies_index": "@@//:swift_deps_index.json",
               "init_submodules": false,
               "recursive_init_submodules": false,

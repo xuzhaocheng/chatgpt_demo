@@ -24,5 +24,6 @@ swift_deps.from_file(
 use_repo(
     swift_deps,
     "swiftpkg_alamofire",
+    "swiftpkg_swiftui_cached_async_image",
 )
 # swift_deps END
