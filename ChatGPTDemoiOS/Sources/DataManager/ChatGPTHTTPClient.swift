@@ -15,7 +15,7 @@ class ChatGPTHTTPClient {
     
     let baseURL = "https://api.openai.com/v1"
     
-    private let maxPollRetry: Int = 5
+    private let maxPollRetry: Int = 6
     private let openAIAPIKey: String
     private let assistantID: String
         
@@ -151,7 +151,7 @@ class ChatGPTHTTPClient {
                         return
                     }
                     
-                    let waitDuration: Int = NSDecimalNumber(decimal: pow(2, tryNumber)).intValue
+                    let waitDuration: Int = NSDecimalNumber(decimal: pow(1.5, tryNumber)).intValue
                     DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(waitDuration)) {
                         self._pollRunTry(chatgptThreadId: chatgptThreadId, runId: runId, tryNumber: tryNumber+1, completion: completion)
                     }
