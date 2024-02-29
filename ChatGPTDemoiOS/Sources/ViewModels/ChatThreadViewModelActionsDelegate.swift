@@ -8,9 +8,13 @@
 import Foundation
 
 protocol ChatThreadViewModelActionsDelegate: AnyObject {
+    var messages: [ChatMessageModel] { get set}
+    
     func removeAllPlaceholderMessages()
     
     func addFailureMessage()
     
     func appendMessage(message: ChatMessageModel)
+    
+//    func messages() -> [ChatMessageModel]
 }

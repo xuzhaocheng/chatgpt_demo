@@ -14,11 +14,13 @@ class ChatThreadViewModel: ObservableObject, ChatThreadViewModelActionsDelegate 
     private var chatThreadViewModelActions: ChatThreadViewModelActions? = nil
     private var chatThread: ChatThreadModel
 
-    @Published private(set) var messages: [ChatMessageModel] = []
+    @Published var messages: [ChatMessageModel] = []
     
     init(chatThread: ChatThreadModel) {
         self.chatThread = chatThread
-        self.chatThreadViewModelActions = ChatThreadChatGPTActions(chatThread: chatThread, delegate: self)
+//        self.chatThreadViewModelActions = ChatThreadChatGPTActions(chatThread: chatThread, delegate: self)
+        self.chatThreadViewModelActions = ChatThreadLMStudioActions(chatThread: chatThread, delegate: self)
+
     }
     
     @Published var chatThreads: [ChatThreadModel] = []
