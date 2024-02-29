@@ -51,7 +51,16 @@ struct MockDataHelper {
     }
     
     static var airGPTContact: Contact {
-        Contact(name: "AirGPT", isSelf: false, profilePictureUrl: Bundle.main.url(forResource: "airbnb", withExtension: "jpeg")!)
+        var llvmName = ""
+        switch ChatThreadDataManager.shared.llvmPreference() {
+        case .chatGPT:
+            llvmName = "ChatGPT"
+        case .lmStudio:
+            llvmName = "LM Studio"
+        }
+        
+        return
+        Contact(name: "AirGPT (\(llvmName))", isSelf: false, profilePictureUrl: Bundle.main.url(forResource: "airbnb", withExtension: "jpeg")!)
     }
     
     static func airGPTMessage(messageType: ChatMessageType = .normal, message: String, chatThread: ChatThreadModel) -> ChatMessageModel {

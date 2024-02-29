@@ -18,8 +18,13 @@ class ChatThreadViewModel: ObservableObject, ChatThreadViewModelActionsDelegate 
     
     init(chatThread: ChatThreadModel) {
         self.chatThread = chatThread
-//        self.chatThreadViewModelActions = ChatThreadChatGPTActions(chatThread: chatThread, delegate: self)
-        self.chatThreadViewModelActions = ChatThreadLMStudioActions(chatThread: chatThread, delegate: self)
+        
+        switch ChatThreadDataManager.shared.llvmPreference() {
+        case .chatGPT:
+            self.chatThreadViewModelActions = ChatThreadChatGPTActions(chatThread: chatThread, delegate: self)
+        case .lmStudio:
+            self.chatThreadViewModelActions = ChatThreadLMStudioActions(chatThread: chatThread, delegate: self)
+        }
 
     }
     

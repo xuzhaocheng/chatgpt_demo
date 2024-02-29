@@ -11,6 +11,7 @@ import OSLog
 struct OptionsView: View {
     @State private var showingClearThreadsPrompt = false
     @State private var showingClearLogsPrompt = false
+    @State private var llvmSelection = ChatThreadDataManager.shared.llvmPreference()
 
     var body: some View {
         NavigationView {
@@ -38,6 +39,17 @@ struct OptionsView: View {
                         Button("Yes", role: .destructive) {
                             Logger.logsToDisplay.removeAll()
                         }
+                    }
+                }
+                
+                Section(header: Text("LLM")) {
+                    Picker("LLVM", selection: $llvmSelection) {
+                        Text("ChatGPT").tag(LLVMType.chatGPT)
+                        Text("LM Studio").tag(LLVMType.lmStudio)
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: llvmSelection) { tag in
+                        ChatThreadDataManager.shared.setLlvmPreference(llvmPreference: tag)
                     }
                 }
                 

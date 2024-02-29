@@ -8,10 +8,16 @@
 import Foundation
 import Combine
 
+enum LLVMType: Int {
+    case chatGPT = 0
+    case lmStudio = 1
+}
+
 class ChatThreadDataManager: NSObject, ObservableObject {
     static let shared = ChatThreadDataManager(chatGPTDataManager: ChatGPTHTTPClient.shared)
     private let cachedChatGPTUserDefaultsKey = "cachedChatGPTUserDefaultsKey"
-    
+    private let llvmPreferenceUserDefaultsKey = "llvmPreferenceUserDefaultsKey"
+
     var chatGPTDataManager: ChatGPTHTTPClient
     
     init(chatGPTDataManager: ChatGPTHTTPClient) {
@@ -47,5 +53,13 @@ class ChatThreadDataManager: NSObject, ObservableObject {
     
     func clearChatGPTThreads() {
         UserDefaults.standard.removeObject(forKey: cachedChatGPTUserDefaultsKey)
+    }
+    
+    func llvmPreference() -> LLVMType {
+        LLVMType(rawValue: UserDefaults.standard.integer(forKey: llvmPreferenceUserDefaultsKey))!
+    }
+    
+    func setLlvmPreference(llvmPreference: LLVMType) {
+        UserDefaults.standard.set(llvmPreference.rawValue, forKey: llvmPreferenceUserDefaultsKey)
     }
 }
