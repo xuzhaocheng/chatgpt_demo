@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import OSLog
+import Combine
 
 struct ThreadView: View {
     @ObservedObject private var chatThreadViewModel: ChatThreadViewModel
     
     var chatThread: ChatThreadModel
+    @State private var loadThreadObserver: AnyCancellable? = nil
     
     @State var textFieldText: String = ""
     @State var isTextFieldFocused: Bool = false
@@ -65,7 +68,17 @@ struct ThreadView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("AirGPT")
         .task {
-            chatThreadViewModel.loadThread()
+            loadThreadObserver = chatThreadViewModel.loadThread()?
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        Logger.system.infoAndCache("Successfully Loaded Thread")
+                    case .failure(let error):
+                        Logger.system.errorAndCache("Error loading thread: \(error)")
+                    }
+                } receiveValue: { output in
+                    
+                }
         }
     }
     
