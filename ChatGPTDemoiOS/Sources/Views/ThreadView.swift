@@ -48,7 +48,7 @@ struct ThreadView: View {
                         chatThreadViewModel.sendMessage(chatThread: chatThread, sender: MockDataHelper.selfContact, message: message)
                     },
                     onFocusChanged: { isFocused in
-                        self.isTextFieldFocused = isFocused
+                        isTextFieldFocused = isFocused
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             if isFocused,
                                let lastMessage = _lastMessage() {

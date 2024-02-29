@@ -143,7 +143,7 @@ class ChatGPTHTTPClient {
         
         AF.request(self.baseURL + "/threads/\(chatgptThreadId)/runs/\(runId)", method: .get, parameters: nil, encoding: JSONEncoding.default, headers: self._headers())
             .validate()
-            .responseDecodable(of: ChatGPTAssistantRunResponse.self) { response in
+            .responseDecodable(of: ChatGPTAssistantRunResponse.self) { [weak self] response in
                 switch response.result {
                 case .success(let chatGPTResponse):
                     if chatGPTResponse.status == "completed" {
@@ -153,7 +153,7 @@ class ChatGPTHTTPClient {
                     
                     let waitDuration: Int = NSDecimalNumber(decimal: pow(1.5, tryNumber)).intValue
                     DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(waitDuration)) {
-                        self._pollRunTry(chatgptThreadId: chatgptThreadId, runId: runId, tryNumber: tryNumber+1, completion: completion)
+                        self?._pollRunTry(chatgptThreadId: chatgptThreadId, runId: runId, tryNumber: tryNumber+1, completion: completion)
                     }
                     
                 case .failure(let error):
