@@ -22,6 +22,8 @@ class ChatThreadViewModel: ObservableObject, ChatThreadViewModelActionsDelegate 
         switch ChatThreadDataManager.shared.llvmPreference() {
         case .chatGPT:
             self.chatThreadViewModelActions = ChatThreadChatGPTActions(chatThread: chatThread, delegate: self)
+        case .ollama:
+            self.chatThreadViewModelActions = ChatThreadOllamaActions(chatThread: chatThread, delegate: self)
         case .lmStudio:
             self.chatThreadViewModelActions = ChatThreadLMStudioActions(chatThread: chatThread, delegate: self)
         }

@@ -55,6 +55,8 @@ struct MockDataHelper {
         switch ChatThreadDataManager.shared.llvmPreference() {
         case .chatGPT:
             llvmName = "ChatGPT"
+        case .ollama:
+            llvmName = "Ollama"
         case .lmStudio:
             llvmName = "LM Studio"
         }

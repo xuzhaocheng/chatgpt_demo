@@ -42,9 +42,10 @@ struct OptionsView: View {
                     }
                 }
                 
-                Section(header: Text("LLM")) {
+                Section(header: Text("LLVM")) {
                     Picker("LLVM", selection: $llvmSelection) {
                         Text("ChatGPT").tag(LLVMType.chatGPT)
+                        Text("Ollama").tag(LLVMType.ollama)
                         Text("LM Studio").tag(LLVMType.lmStudio)
                     }
                     .pickerStyle(.segmented)

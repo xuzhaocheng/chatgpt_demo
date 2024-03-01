@@ -10,7 +10,8 @@ import Combine
 
 enum LLVMType: Int {
     case chatGPT = 0
-    case lmStudio = 1
+    case ollama = 1
+    case lmStudio = 2
 }
 
 class ChatThreadDataManager: NSObject, ObservableObject {
