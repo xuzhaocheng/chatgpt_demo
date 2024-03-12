@@ -13,7 +13,11 @@ import OSLog
 class OllamaHTTPClient {
     static let shared = OllamaHTTPClient()
     
+#if targetEnvironment(simulator)
     let baseURL = "http://localhost:11434/api"
+#else
+    let baseURL = "http://192.168.8.153:11434/api"
+#endif
     
     func trainingMessage(chatThread: ChatThreadModel) -> String {
         "You are an AI Chatbot for AirBnB.  You will answer questions on a listing with this description \"\(chatThread.listing!.description)\".  Greet the user with a short and friendly welcome message. The welcome message should not mention about the detailed description the user has provided."
