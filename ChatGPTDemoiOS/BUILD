@@ -65,6 +65,7 @@ swift_library(
     deps = [
         "@swiftpkg_alamofire//:Source_Alamofire",
         "@swiftpkg_swiftui_cached_async_image//:Sources_CachedAsyncImage",
+        "@swiftpkg_swinject//:Sources_Swinject"
     ],
     data = [
         "//Resources:Images",

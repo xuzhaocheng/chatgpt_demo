@@ -8,7 +8,7 @@
 import Combine
 import OSLog
 
-class ChatThreadOllamaActions: ChatThreadViewModelActions {
+class ChatThreadOllamaActions: ChatThreadViewModelActionsProviding {
     var chatThread: ChatThreadModel
 
     private var sendMessageObserver: AnyCancellable? = nil

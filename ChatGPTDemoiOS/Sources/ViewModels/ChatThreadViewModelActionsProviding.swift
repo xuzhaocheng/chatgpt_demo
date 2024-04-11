@@ -9,7 +9,7 @@ import Foundation
 
 import Combine
 
-protocol ChatThreadViewModelActions {  
+protocol ChatThreadViewModelActionsProviding {  
     var chatThread: ChatThreadModel { get set }
 
     func loadThread() -> Future<ChatThreadModel, Error>

@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "be9e50200bc3b0b5a89cc541d55112b93aa71c756a1d22e6cc0ce2d300476f21",
+  "moduleFileHash": "1c026f45f27ae966cc64a601af71d10d411217dabdaadffdee68f86020781153",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -35,7 +35,8 @@
           },
           "imports": {
             "swiftpkg_alamofire": "swiftpkg_alamofire",
-            "swiftpkg_swiftui_cached_async_image": "swiftpkg_swiftui_cached_async_image"
+            "swiftpkg_swiftui_cached_async_image": "swiftpkg_swiftui_cached_async_image",
+            "swiftpkg_swinject": "swiftpkg_swinject"
           },
           "devImports": [],
           "tags": [
@@ -3617,7 +3618,7 @@
       "general": {
         "bzlTransitiveDigest": "RAXmIOdYeEgAIU2uKKJFxO3Uqo7xvnGxHmOD276y14c=",
         "accumulatedFileDigests": {
-          "@@//:swift_deps_index.json": "a2728927988764a308807e6b18a942ed197012be94949436198aef49700a1008"
+          "@@//:swift_deps_index.json": "8d9a733535683174ab13fa34fdb290e9caba2320a8d059523004147a3a1f5b3d"
         },
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -3629,6 +3630,26 @@
               "bazel_package_name": "swiftpkg_alamofire",
               "commit": "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
               "remote": "https://github.com/Alamofire/Alamofire.git",
+              "dependencies_index": "@@//:swift_deps_index.json",
+              "init_submodules": false,
+              "recursive_init_submodules": false,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          },
+          "swiftpkg_swinject": {
+            "bzlFile": "@@rules_swift_package_manager~0.26.2//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "name": "rules_swift_package_manager~0.26.2~swift_deps~swiftpkg_swinject",
+              "bazel_package_name": "swiftpkg_swinject",
+              "commit": "0b0fa300d0fe24be810750272e0e7ea1971dff90",
+              "remote": "https://github.com/Swinject/Swinject.git",
               "dependencies_index": "@@//:swift_deps_index.json",
               "init_submodules": false,
               "recursive_init_submodules": false,

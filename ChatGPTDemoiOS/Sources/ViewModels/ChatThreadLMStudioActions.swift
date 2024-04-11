@@ -8,7 +8,7 @@
 import Combine
 import OSLog
 
-class ChatThreadLMStudioActions: ChatThreadViewModelActions {
+class ChatThreadLMStudioActions: ChatThreadViewModelActionsProviding {
     var chatThread: ChatThreadModel
 
     private var sendMessageObserver: AnyCancellable? = nil

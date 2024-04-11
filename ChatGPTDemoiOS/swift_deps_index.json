@@ -1,7 +1,8 @@
 {
   "direct_dep_identities": [
     "alamofire",
-    "swiftui-cached-async-image"
+    "swiftui-cached-async-image",
+    "swinject"
   ],
   "modules": [
     {
@@ -23,6 +24,17 @@
       "product_memberships": [
         "CachedAsyncImage"
       ]
+    },
+    {
+      "name": "Swinject",
+      "c99name": "Swinject",
+      "src_type": "swift",
+      "label": "@swiftpkg_swinject//:Sources_Swinject",
+      "package_identity": "swinject",
+      "product_memberships": [
+        "Swinject",
+        "Swinject-Dynamic"
+      ]
     }
   ],
   "products": [
@@ -40,6 +52,22 @@
       "type": "library",
       "target_labels": [
         "@swiftpkg_swiftui_cached_async_image//:Sources_CachedAsyncImage"
+      ]
+    },
+    {
+      "identity": "swinject",
+      "name": "Swinject",
+      "type": "library",
+      "target_labels": [
+        "@swiftpkg_swinject//:Sources_Swinject"
+      ]
+    },
+    {
+      "identity": "swinject",
+      "name": "Swinject-Dynamic",
+      "type": "library",
+      "target_labels": [
+        "@swiftpkg_swinject//:Sources_Swinject"
       ]
     }
   ],
@@ -60,6 +88,15 @@
         "commit": "467a3d17479887943ab917a379e62bbaff60ac8a",
         "remote": "https://github.com/lorenzofiamingo/swiftui-cached-async-image.git",
         "version": "2.1.1"
+      }
+    },
+    {
+      "name": "swiftpkg_swinject",
+      "identity": "swinject",
+      "remote": {
+        "commit": "0b0fa300d0fe24be810750272e0e7ea1971dff90",
+        "remote": "https://github.com/Swinject/Swinject.git",
+        "version": "2.8.5"
       }
     }
   ]

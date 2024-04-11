@@ -8,7 +8,7 @@
 import Combine
 import OSLog
 
-class ChatThreadChatGPTActions: ChatThreadViewModelActions {
+class ChatThreadChatGPTActions: ChatThreadViewModelActionsProviding {
     private var lastUserMessgeSentId: String?
     
     var chatThread: ChatThreadModel

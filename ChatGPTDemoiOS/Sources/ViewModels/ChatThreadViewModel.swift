@@ -8,10 +8,11 @@
 import Foundation
 import Combine
 import OSLog
+import Swinject
 
 class ChatThreadViewModel: ObservableObject, ChatThreadViewModelActionsDelegate {
     
-    private var chatThreadViewModelActions: ChatThreadViewModelActions? = nil
+    private var chatThreadViewModelActions: ChatThreadViewModelActionsProviding? = nil
     private var chatThread: ChatThreadModel
 
     @Published var messages: [ChatMessageModel] = []
@@ -19,15 +20,7 @@ class ChatThreadViewModel: ObservableObject, ChatThreadViewModelActionsDelegate 
     init(chatThread: ChatThreadModel) {
         self.chatThread = chatThread
         
-        switch ChatThreadDataManager.shared.llvmPreference() {
-        case .chatGPT:
-            self.chatThreadViewModelActions = ChatThreadChatGPTActions(chatThread: chatThread, delegate: self)
-        case .ollama:
-            self.chatThreadViewModelActions = ChatThreadOllamaActions(chatThread: chatThread, delegate: self)
-        case .lmStudio:
-            self.chatThreadViewModelActions = ChatThreadLMStudioActions(chatThread: chatThread, delegate: self)
-        }
-
+        self.chatThreadViewModelActions = Container.shared.resolve(ChatThreadViewModelActionsProviding.self, arguments: ChatThreadDataManager.shared.llvmPreference(), chatThread, self as ChatThreadViewModelActionsDelegate)
     }
     
     @Published var chatThreads: [ChatThreadModel] = []

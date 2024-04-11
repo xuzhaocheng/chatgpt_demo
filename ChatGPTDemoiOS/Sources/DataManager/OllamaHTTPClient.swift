@@ -46,7 +46,7 @@ class OllamaHTTPClient {
             }
             
             let params: [String: Any] = [
-                "model": "llama2:latest",
+                "model": "llama2:13b",
                 "messages": messages,
                 "options": [
                     "temperature": 0.7

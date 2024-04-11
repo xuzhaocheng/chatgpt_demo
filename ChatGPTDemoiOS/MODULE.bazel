@@ -25,5 +25,6 @@ use_repo(
     swift_deps,
     "swiftpkg_alamofire",
     "swiftpkg_swiftui_cached_async_image",
+    "swiftpkg_swinject",
 )
 # swift_deps END
